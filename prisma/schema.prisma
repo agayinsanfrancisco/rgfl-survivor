@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ MODELS ============
+
+// User accounts (Players & Admins)
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  name         String?
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  picks        Pick[]
+  preseasonRankings PreseasonRank[]
+}
+
+// Castaways (Contestants)
+model Castaway {
+  id           String   @id @default(uuid())
+  name         String
+  age          Int
+  hometown     String
+  occupation   String
+  tribe        String
+  imageUrl     String?
+  bio          String?
+  createdAt    DateTime @default(now())
+
+  picks        Pick[]
+  preseasonRankings PreseasonRank[]
+}
+
+// Weekly picks (1 per user per week)
+model Pick {
+  id           String   @id @default(uuid())
+  userId       String
+  castawayId   String
+  weekNumber   Int
+  points       Int      @default(0)
+  submittedAt  DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+  castaway     Castaway @relation(fields: [castawayId], references: [id])
+}
+
+// Preseason Ranking
+model PreseasonRank {
+  id           String   @id @default(uuid())
+  userId       String
+  castawayId   String
+  rank         Int
+
+  user         User     @relation(fields: [userId], references: [id])
+  castaway     Castaway @relation(fields: [castawayId], references: [id])
+
+  @@unique([userId, castawayId])
+}
+
+// The one and only League (all users are in this league)
+model League {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  season       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  // Future: add adminIds [String] if you want multi-admin
+
+  // No explicit user/league join table since all users are auto-enrolled
+}
+
+// Weekly Results (for admin to set official outcomes and points)
+model WeeklyResult {
+  id           String   @id @default(uuid())
+  weekNumber   Int
+  castawayId   String
+  pointsAwarded Int
+  createdAt    DateTime @default(now())
+
+  castaway     Castaway @relation(fields: [castawayId], references: [id])
+}
