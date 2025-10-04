@@ -5,13 +5,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import authRoutes from "./auth";
-import castawayRoutes from "./castaways";
-import pickRoutes from "./picks";
-import userRoutes from "./users";
-import pointRoutes from "./admin";
-import seasonRoutes from "./admin";
-import leagueRoutes from "./league";
+import authRoutes from "./auth.js";
+import castawayRoutes from "./castaways.js";
+import pickRoutes from "./picks.js";
+import userRoutes from "./users.js";
+import pointRoutes from "./admin.js";
+import seasonRoutes from "./admin.js";
+import leagueRoutes from "./league.js";
 import { PrismaClient } from "@prisma/client";
 dotenv.config();
 const app = express();
@@ -50,10 +50,18 @@ app.use("/api/season", seasonRoutes);
 app.use("/api/league", leagueRoutes);
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-    const publicPath = path.join(__dirname, '..', 'dist', 'public');
+    const publicPath = path.join(__dirname, '..', 'public');
     app.use(express.static(publicPath));
-    // Catch all handler: send back React's index.html file for client-side routing
-    app.get('*', (req, res) => {
+    // Serve React app for non-API routes
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(publicPath, 'index.html'));
+    });
+    // Catch all handler for client-side routing (but not API routes)
+    app.get('*', (req, res, next) => {
+        // Skip API routes
+        if (req.path.startsWith('/api/')) {
+            return next();
+        }
         res.sendFile(path.join(publicPath, 'index.html'));
     });
 }

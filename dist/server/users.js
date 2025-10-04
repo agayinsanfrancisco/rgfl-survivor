@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
-import { requireAdmin } from "./middleware";
+import { requireAdmin } from "./middleware.js";
 const prisma = new PrismaClient();
 const router = Router();
 // Get all users (admin only)
