@@ -7,7 +7,7 @@ import { z } from "zod";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-const SECRET = process.env.JWT_SECRET || "changeme";
+const SECRET = "ab0a7959c06c1449f2ec58732091d033032adea96fd83a60029444a700c07b4817174d42af32ccd731f2e703b274b63f6d7eb3f300f01a816abf072f8fcd827b";
 
 // Zod schemas
 const signupSchema = z.object({

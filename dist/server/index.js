@@ -16,13 +16,13 @@ import setupRoutes from "./setup.js";
 import { PrismaClient } from "@prisma/client";
 dotenv.config();
 const app = express();
-// Initialize Prisma with error handling and fallback
+// Initialize Prisma with your specific database URL
 let prisma;
 try {
     prisma = new PrismaClient({
         datasources: {
             db: {
-                url: process.env.DATABASE_URL || "postgresql://rgfl_survivor_db_user:cPam8QBgB6uK7lUBZHDUgo7uAhIsMKSV@dpg-d3fohbc9c44c73dagrm0-a/rgfl_survivor_db"
+                url: "postgresql://rgfl_survivor_db_user:cPam8QBgB6uK7lUBZHDUgo7uAhIsMKSV@dpg-d3fohbc9c44c73dagrm0-a/rgfl_survivor_db"
             }
         }
     });
@@ -74,7 +74,7 @@ const __dirname = path.dirname(__filename);
 // CORS configuration
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL || true
+        ? "https://rgfl-survivor.onrender.com"
         : true,
     credentials: true
 };
@@ -82,7 +82,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 // Session configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET || "keyboard cat",
+    secret: "ab0a7959c06c1449f2ec58732091d033032adea96fd83a60029444a700c07b4817174d42af32ccd731f2e703b274b63f6d7eb3f300f01a816abf072f8fcd827b",
     resave: false,
     saveUninitialized: false,
     cookie: {

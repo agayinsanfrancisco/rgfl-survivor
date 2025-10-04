@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret";
+const JWT_SECRET = "ab0a7959c06c1449f2ec58732091d033032adea96fd83a60029444a700c07b4817174d42af32ccd731f2e703b274b63f6d7eb3f300f01a816abf072f8fcd827b";
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies.token || req.headers.authorization?.replace("Bearer ", "");
