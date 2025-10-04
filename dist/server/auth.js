@@ -65,6 +65,7 @@ router.get("/me", async (req, res) => {
         res.json(user);
     }
     catch (err) {
+        console.error("Auth /me error:", err);
         res.status(401).json({ error: "Invalid token" });
     }
 });

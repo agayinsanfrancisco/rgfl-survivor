@@ -15,6 +15,6 @@ const Splash = () => {
             }
         }
     }, [user, navigate]);
-    return (_jsxs("div", { className: "container", children: [_jsx("h1", { children: "Reality Games: Survivor Fantasy League" }), _jsx("p", { children: "Draft, rank, and play along with every episode of Survivor 49." }), _jsxs("p", { children: [_jsx("strong", { children: "Sign up" }), " to join the game and make your picks. If you\u2019re already registered, just log in to start playing!"] })] }));
+    return (_jsxs("div", { className: "container", children: [_jsx("h1", { children: "Reality Games: Survivor Fantasy League" }), _jsx("p", { children: "Draft, rank, and play along with every episode of Survivor 49." }), _jsxs("p", { children: [_jsx("strong", { children: "Sign up" }), " to join the game and make your picks. If you're already registered, just log in to start playing!"] })] }));
 };
 export default Splash;

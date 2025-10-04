@@ -7,7 +7,6 @@ const Splash: React.FC = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    console.log("Splash component mounted, user:", user);
     if (user) {
       if (user.isAdmin) {
         navigate("/admin");
@@ -16,8 +15,6 @@ const Splash: React.FC = () => {
       }
     }
   }, [user, navigate]);
-
-  console.log("Splash component rendering");
 
   return (
     <div className="container">

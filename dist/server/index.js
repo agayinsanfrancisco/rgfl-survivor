@@ -68,6 +68,11 @@ if (process.env.NODE_ENV === 'production') {
 else {
     app.get("/", (_, res) => res.send("RGFL backend is running."));
 }
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error("Global error handler:", err);
+    res.status(500).json({ error: "Internal server error" });
+});
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

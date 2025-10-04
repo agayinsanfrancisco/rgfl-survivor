@@ -70,6 +70,7 @@ router.get("/me", async (req, res) => {
     if (!user) return res.status(401).json({ error: "User not found" });
     res.json(user);
   } catch (err: any) {
+    console.error("Auth /me error:", err);
     res.status(401).json({ error: "Invalid token" });
   }
 });
