@@ -1,1 +1,9 @@
-node_modules
+node_modules/
+dist/
+.env
+.env.*
+.DS_Store
+client/.DS_Store
+client/src/.DS_Store
+dist/.DS_Store
+dist/public/.DS_Store

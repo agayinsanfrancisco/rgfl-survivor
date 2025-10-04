@@ -8,24 +8,50 @@ const WeeklyPicks: React.FC = () => {
   const [castaways, setCastaways] = useState<Castaway[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    api.get("/api/castaways")
-      .then((res) => setCastaways(res.data))
-      .catch(() => setCastaways([]));
-  }, []);
+    async function load() {
+      try {
+        const [castawaysRes, pickRes] = await Promise.all([
+          api.get("/api/castaways"),
+          api.get("/api/picks/me").catch(err => {
+            if (err?.response?.status === 404) {
+              setErrorMessage("No active week is available yet.");
+              return { data: null };
+            }
+            throw err;
+          })
+        ]);
+        setCastaways(castawaysRes.data);
+        if (pickRes.data?.castawayId) {
+          setSelectedId(pickRes.data.castawayId);
+        }
+      } catch (error) {
+        console.error("Failed to load weekly picks data:", error);
+        setCastaways([]);
+        setErrorMessage("Unable to load weekly picks right now.");
+      }
+    }
+
+    if (user) {
+      load();
+    }
+  }, [user]);
 
   const handleSubmit = async () => {
-    if (!selectedId || !user) return;
+    if (!selectedId) return;
     setStatus("saving");
+    setErrorMessage(null);
     try {
-      await api.post("/api/picks", {
-        userId: user.id,
-        castawayId: selectedId,
+      await api.post("/api/picks/me", {
+        castawayId: selectedId
       });
       setStatus("success");
-    } catch {
+    } catch (error) {
+      console.error("Failed to save pick:", error);
       setStatus("error");
+      setErrorMessage("Submission failed. Try again.");
     }
   };
 
@@ -58,7 +84,7 @@ const WeeklyPicks: React.FC = () => {
       </button>
 
       {status === "success" && <p style={{ color: "green" }}>Pick submitted successfully!</p>}
-      {status === "error" && <p style={{ color: "crimson" }}>Submission failed. Try again.</p>}
+      {errorMessage && <p style={{ color: "crimson" }}>{errorMessage}</p>}
 
       <style>{`
         .castaway-grid {

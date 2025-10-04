@@ -4,17 +4,20 @@ import api from "@/lib/api";
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState("idle");
+    const [error, setError] = useState(null);
     const onSubmit = async (e) => {
         e.preventDefault();
         setStatus("loading");
+        setError(null);
         try {
             await api.post("/api/auth/forgot-password", { email });
             setStatus("sent");
         }
         catch {
             setStatus("error");
+            setError("Password reset is not yet available. Please contact an admin.");
         }
     };
-    return (_jsxs("div", { className: "container", children: [_jsx("h2", { children: "Forgot Password" }), _jsxs("form", { onSubmit: onSubmit, children: [_jsx("input", { type: "email", value: email, onChange: e => setEmail(e.target.value), placeholder: "Enter your email", required: true, style: { display: "block", marginBottom: 12, width: "100%" } }), _jsx("button", { type: "submit", children: "Send Reset Link" })] }), status === "sent" && _jsx("p", { style: { color: "green" }, children: "Check your inbox!" }), status === "error" && _jsx("p", { style: { color: "crimson" }, children: "Couldn\u2019t send link." })] }));
+    return (_jsxs("div", { className: "container", children: [_jsx("h2", { children: "Forgot Password" }), _jsxs("form", { onSubmit: onSubmit, children: [_jsx("input", { type: "email", value: email, onChange: e => setEmail(e.target.value), placeholder: "Enter your email", required: true, style: { display: "block", marginBottom: 12, width: "100%" } }), _jsx("button", { type: "submit", children: "Send Reset Link" })] }), status === "sent" && _jsx("p", { style: { color: "green" }, children: "Check your inbox!" }), status === "error" && _jsx("p", { style: { color: "crimson" }, children: error })] }));
 };
 export default ForgotPassword;

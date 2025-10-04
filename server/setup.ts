@@ -1,12 +1,16 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import prisma from "./prisma.js";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
-// Database setup endpoint
-router.post("/setup", async (req, res) => {
+const allowSetupEndpoint = process.env.ENABLE_SETUP_ENDPOINT === "true";
+
+router.post("/", async (_req, res) => {
+  if (!allowSetupEndpoint) {
+    return res.status(403).json({ error: "Setup endpoint is disabled." });
+  }
+
   try {
     console.log("🔧 Starting database setup...");
 

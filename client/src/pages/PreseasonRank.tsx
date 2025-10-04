@@ -2,27 +2,50 @@ import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Castaway } from "../shared/types";
 
+const STORAGE_KEY = "rgfl_preseason_rankings";
+
 const PreseasonRank: React.FC = () => {
   const [castaways, setCastaways] = useState<Castaway[]>([]);
   const [rankings, setRankings] = useState<string[]>([]);
+  const [status, setStatus] = useState<"idle" | "saved">("idle");
 
   useEffect(() => {
-    api.get("/api/castaways").then(res => {
-      setCastaways(res.data);
-      setRankings(res.data.map((c: Castaway) => c.id));
-    });
+    async function load() {
+      try {
+        const res = await api.get("/api/castaways");
+        const ids = res.data.map((c: Castaway) => c.id);
+        setCastaways(res.data);
+
+        if (typeof window !== "undefined") {
+          const stored = window.localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored) as string[];
+            setRankings(parsed.filter(id => ids.includes(id)));
+            return;
+          }
+        }
+        setRankings(ids);
+      } catch (error) {
+        console.error("Failed to load castaways:", error);
+      }
+    }
+
+    load();
   }, []);
 
   const move = (from: number, to: number) => {
+    if (to < 0 || to >= rankings.length) return;
     const updated = [...rankings];
     const [moved] = updated.splice(from, 1);
     updated.splice(to, 0, moved);
     setRankings(updated);
+    setStatus("idle");
   };
 
-  const save = async () => {
-    await api.post("/api/rankings", { rankings });
-    alert("Rankings saved!");
+  const save = () => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rankings));
+    setStatus("saved");
   };
 
   return (
@@ -42,6 +65,7 @@ const PreseasonRank: React.FC = () => {
         })}
       </ol>
       <button onClick={save}>Save Rankings</button>
+      {status === "saved" && <p style={{ color: "green" }}>Rankings saved to this browser.</p>}
     </div>
   );
 };

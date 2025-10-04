@@ -4,14 +4,21 @@ import api from "@/lib/api";
 const SeasonManager = () => {
   const [weekNumber, setWeekNumber] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
 
   const createWeek = async (e: React.FormEvent) => {
     e.preventDefault();
-    await api.post("/api/admin/week", {
-      number: Number(weekNumber),
-      isActive
-    });
-    alert("New week created!");
+    setStatus("saving");
+    try {
+      await api.post("/api/admin/week", {
+        weekNumber: Number(weekNumber),
+        isActive
+      });
+      setStatus("success");
+    } catch (error) {
+      console.error("Failed to create week:", error);
+      setStatus("error");
+    }
   };
 
   return (
@@ -32,8 +39,12 @@ const SeasonManager = () => {
           />
           Active Week
         </label>
-        <button type="submit">Create Week</button>
+        <button type="submit" disabled={status === "saving"}>
+          {status === "saving" ? "Saving..." : "Save Week"}
+        </button>
       </form>
+      {status === "success" && <p style={{ color: "green" }}>Week saved!</p>}
+      {status === "error" && <p style={{ color: "crimson" }}>Failed to save week.</p>}
     </div>
   );
 };

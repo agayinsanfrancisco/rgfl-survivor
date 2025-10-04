@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, AuthContextType } from "../shared/types";
-import api from "@/lib/api";
+import api, { AUTH_STORAGE_KEY, setAuthToken } from "@/lib/api";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -9,27 +9,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Add a small delay to ensure the app is fully mounted
-    const timer = setTimeout(() => {
-      api.get("/api/auth/me")
-        .then((res) => {
-          setUser(res.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("Auth check failed (normal for unauthenticated users):", error);
-          setUser(null);
-          setLoading(false);
-        });
-    }, 100);
+    const storedToken = typeof window !== "undefined" ? window.localStorage.getItem(AUTH_STORAGE_KEY) : null;
+    if (storedToken) {
+      setAuthToken(storedToken);
+    }
 
-    return () => clearTimeout(timer);
+    api
+      .get("/api/auth/me")
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((error) => {
+        console.log("Auth check failed (normal for unauthenticated users):", error);
+        setAuthToken(null);
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       const res = await api.post("/api/auth/login", { email, password });
       setUser(res.data.user);
+      setAuthToken(res.data.token ?? null);
     } catch (error) {
       console.error("Login error:", error);
       throw error;
@@ -37,9 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    api.post("/api/auth/logout")
+    api
+      .post("/api/auth/logout")
       .catch((error) => console.error("Logout error:", error))
-      .finally(() => setUser(null));
+      .finally(() => {
+        setAuthToken(null);
+        setUser(null);
+      });
   };
 
   return (

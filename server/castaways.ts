@@ -1,23 +1,16 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "./prisma.js";
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // GET all castaways
-router.get("/", async (_, res) => {
+router.get("/", async (_req, res) => {
   try {
-    // Check if database is available
-    if (!prisma || !prisma.castaway) {
-      return res.status(503).json({ error: "Database not available. Please try again later." });
-    }
-    
-    const castaways = await prisma.castaway.findMany();
+    const castaways = await prisma.castaway.findMany({
+      orderBy: { name: "asc" }
+    });
     res.json(castaways);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching castaways:", error);
-    if (error.code === 'P1001') {
-      return res.status(503).json({ error: "Database not available. Please try again later." });
-    }
     res.status(500).json({ error: "Failed to fetch castaways" });
   }
 });

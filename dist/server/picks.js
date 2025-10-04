@@ -1,52 +1,47 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "./prisma.js";
+import { authenticate, requireAdmin } from "./middleware.js";
 const router = Router();
-// Get my picks for current week
+router.use(authenticate);
 router.get("/me", async (req, res) => {
     const userId = req.user?.id;
-    if (!userId)
-        return res.status(401).json({ error: "Unauthorized" });
     const week = await prisma.week.findFirst({ where: { isActive: true } });
-    if (!week)
+    if (!week) {
         return res.status(404).json({ error: "No active week" });
+    }
     const pick = await prisma.pick.findFirst({
         where: { userId, weekNumber: week.weekNumber },
         include: { castaway: true }
     });
     res.json(pick);
 });
-// Submit a pick for this week
 router.post("/me", async (req, res) => {
     const userId = req.user?.id;
-    if (!userId)
-        return res.status(401).json({ error: "Unauthorized" });
     const { castawayId } = req.body;
+    if (!castawayId) {
+        return res.status(400).json({ error: "castawayId is required" });
+    }
     const week = await prisma.week.findFirst({ where: { isActive: true } });
-    if (!week)
+    if (!week) {
         return res.status(404).json({ error: "No active week" });
+    }
     const existing = await prisma.pick.findFirst({
         where: { userId, weekNumber: week.weekNumber }
     });
-    if (existing) {
-        // Update existing
-        const updated = await prisma.pick.update({
+    const pick = existing
+        ? await prisma.pick.update({
             where: { id: existing.id },
             data: { castawayId }
+        })
+        : await prisma.pick.create({
+            data: { userId, weekNumber: week.weekNumber, castawayId }
         });
-        return res.json(updated);
-    }
-    // Create new pick
-    const newPick = await prisma.pick.create({
-        data: { userId, weekNumber: week.weekNumber, castawayId }
-    });
-    res.json(newPick);
+    res.json(pick);
 });
-// Admin: get all picks for a week
-router.get("/week/:weekNumber", async (req, res) => {
-    const { weekNumber } = req.params;
+router.get("/week/:weekNumber", requireAdmin, async (req, res) => {
+    const weekNumber = Number(req.params.weekNumber);
     const picks = await prisma.pick.findMany({
-        where: { weekNumber: parseInt(weekNumber) },
+        where: { weekNumber },
         include: { user: true, castaway: true }
     });
     res.json(picks);

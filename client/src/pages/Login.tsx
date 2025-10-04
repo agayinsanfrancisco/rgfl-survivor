@@ -17,7 +17,7 @@ const Login: React.FC = () => {
       await login(email, password);
       navigate(routes.dashboard); // now using alias
     } catch (e: any) {
-      setErr(e?.response?.data?.message ?? "Login failed");
+      setErr(e?.response?.data?.error ?? "Login failed");
     }
   };
 

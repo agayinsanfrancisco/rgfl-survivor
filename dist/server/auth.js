@@ -1,11 +1,20 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
+import prisma from "./prisma.js";
 const router = express.Router();
-const prisma = new PrismaClient();
-const SECRET = "ab0a7959c06c1449f2ec58732091d033032adea96fd83a60029444a700c07b4817174d42af32ccd731f2e703b274b63f6d7eb3f300f01a816abf072f8fcd827b";
+const SECRET = process.env.JWT_SECRET || "development-insecure-jwt-secret";
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === "production") {
+    console.warn("JWT_SECRET is not set. Using an insecure fallback secret.");
+}
+const sameSiteSetting = process.env.NODE_ENV === "production" ? "none" : "lax";
+const authCookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: sameSiteSetting,
+    maxAge: 7 * 24 * 60 * 60 * 1000
+};
 // Zod schemas
 const signupSchema = z.object({
     email: z.string().email(),
@@ -15,10 +24,6 @@ const signupSchema = z.object({
 router.post("/signup", async (req, res) => {
     try {
         const data = signupSchema.parse(req.body);
-        // Check if database is available
-        if (!prisma || !prisma.user) {
-            return res.status(503).json({ error: "Database not available. Please try again later." });
-        }
         const existing = await prisma.user.findUnique({ where: { email: data.email } });
         if (existing)
             return res.status(409).json({ error: "Email already in use" });
@@ -27,7 +32,9 @@ router.post("/signup", async (req, res) => {
             data: { ...data, password: hash }
         });
         const token = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, SECRET, { expiresIn: "7d" });
-        res.json({ user: { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin }, token });
+        res
+            .cookie("token", token, authCookieOptions)
+            .json({ user: { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin }, token });
     }
     catch (err) {
         console.error("Signup error:", err);
@@ -47,10 +54,6 @@ const loginSchema = z.object({
 router.post("/login", async (req, res) => {
     try {
         const data = loginSchema.parse(req.body);
-        // Check if database is available
-        if (!prisma || !prisma.user) {
-            return res.status(503).json({ error: "Database not available. Please try again later." });
-        }
         const user = await prisma.user.findUnique({ where: { email: data.email } });
         if (!user)
             return res.status(401).json({ error: "Invalid email or password" });
@@ -58,7 +61,9 @@ router.post("/login", async (req, res) => {
         if (!valid)
             return res.status(401).json({ error: "Invalid email or password" });
         const token = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, SECRET, { expiresIn: "7d" });
-        res.json({ user: { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin }, token });
+        res
+            .cookie("token", token, authCookieOptions)
+            .json({ user: { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin }, token });
     }
     catch (err) {
         console.error("Login error:", err);
@@ -71,13 +76,10 @@ router.post("/login", async (req, res) => {
 // Get current user
 router.get("/me", async (req, res) => {
     try {
-        const token = req.headers.authorization?.replace("Bearer ", "");
+        const cookieToken = req.cookies?.token;
+        const token = req.headers.authorization?.replace("Bearer ", "") || cookieToken;
         if (!token)
             return res.status(401).json({ error: "No token" });
-        // Check if database is available
-        if (!prisma || !prisma.user) {
-            return res.status(503).json({ error: "Database not available. Please try again later." });
-        }
         const payload = jwt.verify(token, SECRET);
         const user = await prisma.user.findUnique({
             where: { id: payload.id },
@@ -97,6 +99,18 @@ router.get("/me", async (req, res) => {
 });
 // Logout
 router.post("/logout", (req, res) => {
-    res.json({ message: "Logged out successfully" });
+    res
+        .clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: sameSiteSetting
+    })
+        .json({ message: "Logged out successfully" });
+});
+router.post("/forgot-password", (_req, res) => {
+    res.status(501).json({ error: "Password reset is not yet available." });
+});
+router.post("/reset-password", (_req, res) => {
+    res.status(501).json({ error: "Password reset is not yet available." });
 });
 export default router;

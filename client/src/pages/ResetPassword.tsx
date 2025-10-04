@@ -7,17 +7,20 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
     setStatus("saving");
+    setError(null);
     try {
       await api.post("/api/auth/reset-password", { token, password });
       setStatus("success");
       navigate("/login");
     } catch {
       setStatus("error");
+      setError("Password reset is not yet available. Please contact an admin.");
     }
   };
 
@@ -37,7 +40,7 @@ const ResetPassword: React.FC = () => {
         <button type="submit">Reset Password</button>
       </form>
       {status === "success" && <p>Password reset successfully!</p>}
-      {status === "error" && <p style={{ color: "crimson" }}>Reset failed. Try again.</p>}
+      {status === "error" && <p style={{ color: "crimson" }}>{error}</p>}
     </div>
   );
 };

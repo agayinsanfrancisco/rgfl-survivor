@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Navigation from "@/components/Navigation";
 import Splash from "@/pages/Splash";
@@ -23,7 +23,7 @@ import CastawayManager from "@/pages/admin/CastawayManager";
 import UserManager from "@/pages/admin/UserManager";
 import LeagueManager from "@/pages/admin/LeagueManager";
 import PicksManager from "@/pages/admin/PicksManager";
-import PointsManager from "@/pages/admin/PointsManagaer";
+import PointsManager from "@/pages/admin/PointsManager";
 import SeasonManager from "@/pages/admin/SeasonManager";
 import StatsDashboard from "@/pages/admin/StatsDashboard";
 import { routes } from "@/shared/routes";
@@ -36,7 +36,7 @@ const App = () => {
   }
 
   return (
-    <Router>
+    <>
       <Navigation />
       <Routes>
         <Route path={routes.root} element={<Splash />} />
@@ -64,7 +64,7 @@ const App = () => {
 
         <Route path={routes.notFound} element={<NotFound />} />
       </Routes>
-    </Router>
+    </>
   );
 };
 

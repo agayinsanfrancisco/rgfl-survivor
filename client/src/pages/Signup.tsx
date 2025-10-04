@@ -20,7 +20,7 @@ const Signup: React.FC = () => {
       await login(email, password);
       navigate(routes.dashboard);
     } catch (e: any) {
-      setErr(e?.response?.data?.message ?? "Signup failed");
+      setErr(e?.response?.data?.error ?? "Signup failed");
     }
   };
 

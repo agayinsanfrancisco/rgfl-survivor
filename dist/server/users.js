@@ -1,43 +1,40 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
-import { requireAdmin } from "./middleware.js";
-const prisma = new PrismaClient();
+import prisma from "./prisma.js";
+import { authenticate, requireAdmin } from "./middleware.js";
 const router = Router();
-// Get all users (admin only)
-router.get("/", requireAdmin, async (_, res) => {
+router.get("/", requireAdmin, async (_req, res) => {
     const users = await prisma.user.findMany({
         select: { id: true, email: true, name: true, isAdmin: true, createdAt: true }
     });
     res.json(users);
 });
-// Get my profile
-router.get("/me", async (req, res) => {
+router.get("/me", authenticate, async (req, res) => {
     const userId = req.user?.id;
-    if (!userId)
-        return res.status(401).json({ error: "Unauthorized" });
     const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { id: true, email: true, name: true, isAdmin: true, createdAt: true }
     });
     res.json(user);
 });
-// Update my profile
-router.put("/me", async (req, res) => {
+router.put("/me", authenticate, async (req, res) => {
     const userId = req.user?.id;
-    if (!userId)
-        return res.status(401).json({ error: "Unauthorized" });
     const { name } = req.body;
+    if (!name) {
+        return res.status(400).json({ error: "Name is required" });
+    }
     const user = await prisma.user.update({
         where: { id: userId },
         data: { name },
-        select: { id: true, email: true, name: true }
+        select: { id: true, email: true, name: true, isAdmin: true, createdAt: true }
     });
     res.json(user);
 });
-// Admin: update any user admin status
 router.put("/:id/admin", requireAdmin, async (req, res) => {
     const { id } = req.params;
     const { isAdmin } = req.body;
+    if (typeof isAdmin !== "boolean") {
+        return res.status(400).json({ error: "isAdmin must be a boolean" });
+    }
     const updated = await prisma.user.update({ where: { id }, data: { isAdmin } });
     res.json(updated);
 });
