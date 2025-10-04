@@ -12,6 +12,7 @@ import userRoutes from "./users.js";
 import pointRoutes from "./admin.js";
 import seasonRoutes from "./admin.js";
 import leagueRoutes from "./league.js";
+import setupRoutes from "./setup.js";
 import { PrismaClient } from "@prisma/client";
 dotenv.config();
 const app = express();
@@ -45,8 +46,19 @@ async function initializeDatabase() {
             console.log("Database tables already exist");
         }
         catch (error) {
-            console.log("Database tables don't exist, creating...");
-            // This will be handled by Prisma migrations in production
+            console.log("Database tables don't exist, attempting to create...");
+            try {
+                // Try to push schema directly
+                const { execSync } = await import('child_process');
+                execSync('npx prisma db push --force-reset', { stdio: 'inherit' });
+                console.log("Database schema created successfully");
+                // Run seed data
+                execSync('npm run db:seed', { stdio: 'inherit' });
+                console.log("Database seeded successfully");
+            }
+            catch (seedError) {
+                console.error("Failed to create database schema:", seedError);
+            }
         }
     }
     catch (error) {
@@ -87,6 +99,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/points", pointRoutes);
 app.use("/api/season", seasonRoutes);
 app.use("/api/league", leagueRoutes);
+app.use("/api/setup", setupRoutes);
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
     const publicPath = path.join(__dirname, '..', 'public');

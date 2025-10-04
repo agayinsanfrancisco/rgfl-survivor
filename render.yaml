@@ -3,7 +3,7 @@ services:
     name: rgfl-survivor
     env: node
     plan: free
-    buildCommand: npm install && npm run build && npx prisma generate && npx prisma migrate deploy
+    buildCommand: npm install && npm run build && npx prisma generate && npx prisma migrate deploy && npm run db:seed
     startCommand: npm start
     envVars:
       - key: NODE_ENV
