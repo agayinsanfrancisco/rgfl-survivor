@@ -15,6 +15,10 @@ const signupSchema = z.object({
 router.post("/signup", async (req, res) => {
     try {
         const data = signupSchema.parse(req.body);
+        // Check if database is available
+        if (!prisma || !prisma.user) {
+            return res.status(503).json({ error: "Database not available. Please try again later." });
+        }
         const existing = await prisma.user.findUnique({ where: { email: data.email } });
         if (existing)
             return res.status(409).json({ error: "Email already in use" });
@@ -26,6 +30,13 @@ router.post("/signup", async (req, res) => {
         res.json({ user: { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin }, token });
     }
     catch (err) {
+        console.error("Signup error:", err);
+        if (err.code === 'P2002') {
+            return res.status(409).json({ error: "Email already in use" });
+        }
+        if (err.code === 'P1001') {
+            return res.status(503).json({ error: "Database not available. Please try again later." });
+        }
         res.status(400).json({ error: err.message || "Signup failed" });
     }
 });
@@ -36,6 +47,10 @@ const loginSchema = z.object({
 router.post("/login", async (req, res) => {
     try {
         const data = loginSchema.parse(req.body);
+        // Check if database is available
+        if (!prisma || !prisma.user) {
+            return res.status(503).json({ error: "Database not available. Please try again later." });
+        }
         const user = await prisma.user.findUnique({ where: { email: data.email } });
         if (!user)
             return res.status(401).json({ error: "Invalid email or password" });
@@ -46,6 +61,10 @@ router.post("/login", async (req, res) => {
         res.json({ user: { id: user.id, email: user.email, name: user.name, isAdmin: user.isAdmin }, token });
     }
     catch (err) {
+        console.error("Login error:", err);
+        if (err.code === 'P1001') {
+            return res.status(503).json({ error: "Database not available. Please try again later." });
+        }
         res.status(400).json({ error: err.message || "Login failed" });
     }
 });
@@ -55,6 +74,10 @@ router.get("/me", async (req, res) => {
         const token = req.headers.authorization?.replace("Bearer ", "");
         if (!token)
             return res.status(401).json({ error: "No token" });
+        // Check if database is available
+        if (!prisma || !prisma.user) {
+            return res.status(503).json({ error: "Database not available. Please try again later." });
+        }
         const payload = jwt.verify(token, SECRET);
         const user = await prisma.user.findUnique({
             where: { id: payload.id },
@@ -66,6 +89,9 @@ router.get("/me", async (req, res) => {
     }
     catch (err) {
         console.error("Auth /me error:", err);
+        if (err.code === 'P1001') {
+            return res.status(503).json({ error: "Database not available. Please try again later." });
+        }
         res.status(401).json({ error: "Invalid token" });
     }
 });

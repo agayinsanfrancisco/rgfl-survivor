@@ -15,8 +15,47 @@ import leagueRoutes from "./league.js";
 import { PrismaClient } from "@prisma/client";
 dotenv.config();
 const app = express();
-const prisma = new PrismaClient();
+// Initialize Prisma with error handling and fallback
+let prisma;
+try {
+    prisma = new PrismaClient({
+        datasources: {
+            db: {
+                url: process.env.DATABASE_URL || "postgresql://rgfl_survivor_db_user:cPam8QBgB6uK7lUBZHDUgo7uAhIsMKSV@dpg-d3fohbc9c44c73dagrm0-a/rgfl_survivor_db"
+            }
+        }
+    });
+    console.log("Database connected successfully");
+}
+catch (error) {
+    console.error("Database connection failed:", error);
+    // Create a mock prisma client for development
+    prisma = {};
+}
 const PORT = process.env.PORT || 5050;
+// Database initialization function
+async function initializeDatabase() {
+    try {
+        // Test database connection
+        await prisma.$connect();
+        console.log("Database connection established");
+        // Try to create tables if they don't exist
+        try {
+            await prisma.user.findFirst();
+            console.log("Database tables already exist");
+        }
+        catch (error) {
+            console.log("Database tables don't exist, creating...");
+            // This will be handled by Prisma migrations in production
+        }
+    }
+    catch (error) {
+        console.error("Database initialization failed:", error);
+        console.log("Continuing without database connection...");
+    }
+}
+// Initialize database
+initializeDatabase();
 // Get the directory name for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -6,10 +6,18 @@ const prisma = new PrismaClient();
 // GET all castaways
 router.get("/", async (_, res) => {
   try {
+    // Check if database is available
+    if (!prisma || !prisma.castaway) {
+      return res.status(503).json({ error: "Database not available. Please try again later." });
+    }
+    
     const castaways = await prisma.castaway.findMany();
     res.json(castaways);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching castaways:", error);
+    if (error.code === 'P1001') {
+      return res.status(503).json({ error: "Database not available. Please try again later." });
+    }
     res.status(500).json({ error: "Failed to fetch castaways" });
   }
 });
