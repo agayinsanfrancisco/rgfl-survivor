@@ -1,60 +1,86 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 
-interface PickWithRelations {
+interface DraftPickRow {
   id: string;
-  user?: { name: string };
-  castaway?: { name: string };
+  round: number;
+  pickNumber: number;
+  user: { id: string; name: string; email: string };
+  castaway: { id: string; name: string; tribe?: string | null };
 }
 
 const PicksManager = () => {
-  const [picks, setPicks] = useState<PickWithRelations[]>([]);
-  const [weekNumber, setWeekNumber] = useState("1");
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<"PENDING" | "IN_PROGRESS" | "COMPLETED" | "UNKNOWN">("UNKNOWN");
+  const [picks, setPicks] = useState<DraftPickRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
 
-  const loadPicks = async (week: string) => {
+  const loadStatus = async () => {
+    setLoading(true);
     try {
-      const res = await api.get(`/api/picks/week/${week}`);
-      setPicks(res.data);
-      setError(null);
-    } catch (err) {
-      console.error("Failed to load picks:", err);
-      setPicks([]);
-      setError("Unable to load picks for that week.");
+      const res = await api.get("/api/draft/status");
+      setStatus(res.data.draftStatus ?? "UNKNOWN");
+      setPicks(res.data.picks ?? []);
+      setMessage(null);
+    } catch (error) {
+      console.error("Failed to load draft status:", error);
+      setMessage("Unable to load draft data");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadPicks(weekNumber);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadStatus();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!weekNumber) return;
-    loadPicks(weekNumber);
+  const runDraft = async () => {
+    setMessage(null);
+    setLoading(true);
+    try {
+      const res = await api.post("/api/draft/run");
+      setStatus("COMPLETED");
+      setPicks(res.data.picks ?? []);
+      setMessage("Draft completed successfully");
+    } catch (error: any) {
+      console.error("Failed to run draft:", error);
+      setMessage(error?.response?.data?.error ?? "Unable to run draft");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
-      <h2>Picks This Week</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: 16 }}>
-        <input
-          placeholder="Week Number"
-          value={weekNumber}
-          onChange={e => setWeekNumber(e.target.value)}
-          style={{ width: 120, marginRight: 8 }}
-        />
-        <button type="submit">Load Picks</button>
-      </form>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-      <ul>
-        {picks.map(p => (
-          <li key={p.id}>
-            {p.user?.name ?? "Unknown"} picked {p.castaway?.name ?? "Unknown"}
-          </li>
-        ))}
-      </ul>
+      <h2>Draft Manager</h2>
+      <p>Draft status: {status}</p>
+      <button onClick={runDraft} disabled={loading || status === "COMPLETED"} style={{ marginBottom: 16 }}>
+        {loading ? "Processing..." : status === "COMPLETED" ? "Draft Completed" : "Run Draft"}
+      </button>
+      <button onClick={loadStatus} disabled={loading} style={{ marginLeft: 8 }}>
+        Refresh
+      </button>
+      {message && <p style={{ marginTop: 12 }}>{message}</p>}
+      <table style={{ width: "100%", marginTop: 16 }}>
+        <thead>
+          <tr>
+            <th>Pick #</th>
+            <th>User</th>
+            <th>Castaway</th>
+            <th>Round</th>
+          </tr>
+        </thead>
+        <tbody>
+          {picks.map((pick) => (
+            <tr key={pick.id}>
+              <td>{pick.pickNumber}</td>
+              <td>{pick.user?.name ?? pick.user?.email}</td>
+              <td>{pick.castaway?.name}</td>
+              <td>{pick.round}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

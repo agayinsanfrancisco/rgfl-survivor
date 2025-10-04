@@ -35,9 +35,19 @@ router.post("/signup", async (req, res) => {
     const existing = await prisma.user.findUnique({ where: { email: data.email } });
     if (existing) return res.status(409).json({ error: "Email already in use" });
 
+    let league = await prisma.league.findFirst();
+    if (!league) {
+      league = await prisma.league.create({
+        data: {
+          name: "Reality Games Survivor League",
+          code: "RGFL2024"
+        }
+      });
+    }
+
     const hash = await bcrypt.hash(data.password, 10);
     const user = await prisma.user.create({
-      data: { ...data, password: hash }
+      data: { ...data, password: hash, leagueId: league.id }
     });
 
     const token = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, SECRET, { expiresIn: "7d" });

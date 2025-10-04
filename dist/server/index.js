@@ -13,6 +13,9 @@ import adminRoutes from "./admin.js";
 import leagueRoutes from "./league.js";
 import setupRoutes from "./setup.js";
 import resultsRoutes from "./results.js";
+import rankingRoutes from "./rankings.js";
+import draftRoutes from "./draft.js";
+import scoringRoutes from "./scoring.js";
 import prisma from "./prisma.js";
 dotenv.config();
 const app = express();
@@ -57,6 +60,9 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/league", leagueRoutes);
 app.use("/api/results", resultsRoutes);
 app.use("/api/setup", setupRoutes);
+app.use("/api/rankings", rankingRoutes);
+app.use("/api/draft", draftRoutes);
+app.use("/api/admin/scoring", scoringRoutes);
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
     const publicPath = path.resolve(process.cwd(), "dist", "public");

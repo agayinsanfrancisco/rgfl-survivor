@@ -1,41 +1,42 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
-import { useAuth } from "../context/AuthContext";
 const WeeklyPicks = () => {
-    const { user } = useAuth();
-    const [castaways, setCastaways] = useState([]);
+    const [assigned, setAssigned] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [status, setStatus] = useState("idle");
     const [errorMessage, setErrorMessage] = useState(null);
+    const [weekInfo, setWeekInfo] = useState(null);
     useEffect(() => {
         async function load() {
             try {
-                const [castawaysRes, pickRes] = await Promise.all([
-                    api.get("/api/castaways"),
-                    api.get("/api/picks/me").catch(err => {
-                        if (err?.response?.status === 404) {
-                            setErrorMessage("No active week is available yet.");
-                            return { data: null };
-                        }
-                        throw err;
-                    })
-                ]);
-                setCastaways(castawaysRes.data);
-                if (pickRes.data?.castawayId) {
-                    setSelectedId(pickRes.data.castawayId);
+                const res = await api.get("/api/picks/me");
+                if (!res.data) {
+                    setErrorMessage("No active week is available yet.");
+                    return;
+                }
+                setAssigned(res.data.assigned ?? []);
+                if (res.data.pick?.castawayId) {
+                    setSelectedId(res.data.pick.castawayId);
+                }
+                if (res.data.week) {
+                    setWeekInfo({
+                        weekNumber: res.data.week.weekNumber,
+                        lockAt: res.data.week.lockAt
+                    });
                 }
             }
             catch (error) {
+                if (error?.response?.status === 404) {
+                    setErrorMessage("No active week is available yet.");
+                    return;
+                }
                 console.error("Failed to load weekly picks data:", error);
-                setCastaways([]);
                 setErrorMessage("Unable to load weekly picks right now.");
             }
         }
-        if (user) {
-            load();
-        }
-    }, [user]);
+        load();
+    }, []);
     const handleSubmit = async () => {
         if (!selectedId)
             return;
@@ -50,10 +51,13 @@ const WeeklyPicks = () => {
         catch (error) {
             console.error("Failed to save pick:", error);
             setStatus("error");
-            setErrorMessage("Submission failed. Try again.");
+            setErrorMessage(error?.response?.data?.error ?? "Submission failed. Try again.");
         }
     };
-    return (_jsxs("div", { className: "container", children: [_jsx("h2", { children: "Weekly Pick" }), _jsx("p", { children: "Select one castaway to represent you this week:" }), _jsx("div", { className: "castaway-grid", children: castaways.map((c) => (_jsxs("div", { className: `castaway-card ${selectedId === c.id ? "selected" : ""}`, onClick: () => setSelectedId(c.id), children: [_jsx("img", { src: c.imageUrl || "/default-avatar.png", alt: c.name, className: "avatar" }), _jsx("h4", { children: c.name }), _jsx("p", { children: c.tribe })] }, c.id))) }), _jsx("button", { className: "button", onClick: handleSubmit, disabled: !selectedId || status === "saving", style: { marginTop: 24 }, children: status === "saving" ? "Submitting..." : "Submit Pick" }), status === "success" && _jsx("p", { style: { color: "green" }, children: "Pick submitted successfully!" }), errorMessage && _jsx("p", { style: { color: "crimson" }, children: errorMessage }), _jsx("style", { children: `
+    const lockMessage = weekInfo?.lockAt
+        ? `Picks lock at ${new Date(weekInfo.lockAt).toLocaleString()}`
+        : undefined;
+    return (_jsxs("div", { className: "container", children: [_jsx("h2", { children: "Weekly Pick" }), weekInfo && _jsxs("p", { children: ["Week ", weekInfo.weekNumber] }), lockMessage && _jsx("p", { children: lockMessage }), _jsx("p", { children: "Select one of your drafted castaways to be active this week:" }), _jsx("div", { className: "castaway-grid", children: assigned.map((assignment) => (_jsxs("div", { className: `castaway-card ${selectedId === assignment.castawayId ? "selected" : ""}`, onClick: () => setSelectedId(assignment.castawayId), children: [_jsx("img", { src: assignment.castaway.imageUrl || "/default-avatar.png", alt: assignment.castaway.name, className: "avatar" }), _jsx("h4", { children: assignment.castaway.name }), _jsx("p", { children: assignment.castaway.tribe }), _jsxs("p", { children: ["Round ", assignment.round] })] }, assignment.castawayId))) }), _jsx("button", { className: "button", onClick: handleSubmit, disabled: !selectedId || status === "saving", style: { marginTop: 24 }, children: status === "saving" ? "Submitting..." : "Submit Pick" }), status === "success" && _jsx("p", { style: { color: "green" }, children: "Pick submitted successfully!" }), errorMessage && _jsx("p", { style: { color: "crimson" }, children: errorMessage }), _jsx("style", { children: `
         .castaway-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));

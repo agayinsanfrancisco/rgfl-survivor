@@ -17,7 +17,18 @@ router.get("/me", async (req, res) => {
     where: { userId, weekNumber: week.weekNumber },
     include: { castaway: true }
   });
-  res.json(pick);
+
+  const assigned = await prisma.draftPick.findMany({
+    where: { userId },
+    include: { castaway: true },
+    orderBy: { round: "asc" }
+  });
+
+  res.json({
+    pick,
+    assigned,
+    week
+  });
 });
 
 router.post("/me", async (req, res) => {
@@ -33,6 +44,20 @@ router.post("/me", async (req, res) => {
     return res.status(404).json({ error: "No active week" });
   }
 
+  if (week.lockAt && new Date() > week.lockAt) {
+    return res.status(423).json({ error: "Weekly picks are locked" });
+  }
+
+  const assigned = await prisma.draftPick.findMany({ where: { userId } });
+  if (assigned.length === 0) {
+    return res.status(409).json({ error: "Draft not completed yet" });
+  }
+
+  const allowedCastawayIds = new Set(assigned.map((pick) => pick.castawayId));
+  if (!allowedCastawayIds.has(castawayId)) {
+    return res.status(400).json({ error: "Castaway not assigned to this user" });
+  }
+
   const existing = await prisma.pick.findFirst({
     where: { userId, weekNumber: week.weekNumber }
   });
@@ -40,7 +65,7 @@ router.post("/me", async (req, res) => {
   const pick = existing
     ? await prisma.pick.update({
         where: { id: existing.id },
-        data: { castawayId }
+        data: { castawayId, updatedAt: new Date() }
       })
     : await prisma.pick.create({
         data: { userId, weekNumber: week.weekNumber, castawayId }

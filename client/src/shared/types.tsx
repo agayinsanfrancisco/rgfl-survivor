@@ -23,6 +23,20 @@ export interface Pick {
   castaway?: Castaway;
 }
 
+export interface DraftPick {
+  id: string;
+  castawayId: string;
+  round: number;
+  pickNumber: number;
+  castaway: Castaway;
+}
+
+export interface RankingEntrySummary {
+  castawayId: string;
+  position: number;
+  castaway: Castaway;
+}
+
 export interface League {
   id: string;
   name: string;

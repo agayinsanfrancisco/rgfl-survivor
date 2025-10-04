@@ -1,43 +1,50 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { Castaway } from "../shared/types";
-import { useAuth } from "../context/AuthContext";
+
+type AssignedPick = {
+  castawayId: string;
+  castaway: Castaway;
+  round: number;
+};
 
 const WeeklyPicks: React.FC = () => {
-  const { user } = useAuth();
-  const [castaways, setCastaways] = useState<Castaway[]>([]);
+  const [assigned, setAssigned] = useState<AssignedPick[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [weekInfo, setWeekInfo] = useState<{ weekNumber: number; lockAt?: string | null } | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const [castawaysRes, pickRes] = await Promise.all([
-          api.get("/api/castaways"),
-          api.get("/api/picks/me").catch(err => {
-            if (err?.response?.status === 404) {
-              setErrorMessage("No active week is available yet.");
-              return { data: null };
-            }
-            throw err;
-          })
-        ]);
-        setCastaways(castawaysRes.data);
-        if (pickRes.data?.castawayId) {
-          setSelectedId(pickRes.data.castawayId);
+        const res = await api.get("/api/picks/me");
+        if (!res.data) {
+          setErrorMessage("No active week is available yet.");
+          return;
         }
-      } catch (error) {
+        setAssigned(res.data.assigned ?? []);
+        if (res.data.pick?.castawayId) {
+          setSelectedId(res.data.pick.castawayId);
+        }
+        if (res.data.week) {
+          setWeekInfo({
+            weekNumber: res.data.week.weekNumber,
+            lockAt: res.data.week.lockAt
+          });
+        }
+      } catch (error: any) {
+        if (error?.response?.status === 404) {
+          setErrorMessage("No active week is available yet.");
+          return;
+        }
         console.error("Failed to load weekly picks data:", error);
-        setCastaways([]);
         setErrorMessage("Unable to load weekly picks right now.");
       }
     }
 
-    if (user) {
-      load();
-    }
-  }, [user]);
+    load();
+  }, []);
 
   const handleSubmit = async () => {
     if (!selectedId) return;
@@ -48,28 +55,35 @@ const WeeklyPicks: React.FC = () => {
         castawayId: selectedId
       });
       setStatus("success");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to save pick:", error);
       setStatus("error");
-      setErrorMessage("Submission failed. Try again.");
+      setErrorMessage(error?.response?.data?.error ?? "Submission failed. Try again.");
     }
   };
+
+  const lockMessage = weekInfo?.lockAt
+    ? `Picks lock at ${new Date(weekInfo.lockAt).toLocaleString()}`
+    : undefined;
 
   return (
     <div className="container">
       <h2>Weekly Pick</h2>
-      <p>Select one castaway to represent you this week:</p>
+      {weekInfo && <p>Week {weekInfo.weekNumber}</p>}
+      {lockMessage && <p>{lockMessage}</p>}
+      <p>Select one of your drafted castaways to be active this week:</p>
 
       <div className="castaway-grid">
-        {castaways.map((c) => (
+        {assigned.map((assignment) => (
           <div
-            key={c.id}
-            className={`castaway-card ${selectedId === c.id ? "selected" : ""}`}
-            onClick={() => setSelectedId(c.id)}
+            key={assignment.castawayId}
+            className={`castaway-card ${selectedId === assignment.castawayId ? "selected" : ""}`}
+            onClick={() => setSelectedId(assignment.castawayId)}
           >
-            <img src={c.imageUrl || "/default-avatar.png"} alt={c.name} className="avatar" />
-            <h4>{c.name}</h4>
-            <p>{c.tribe}</p>
+            <img src={assignment.castaway.imageUrl || "/default-avatar.png"} alt={assignment.castaway.name} className="avatar" />
+            <h4>{assignment.castaway.name}</h4>
+            <p>{assignment.castaway.tribe}</p>
+            <p>Round {assignment.round}</p>
           </div>
         ))}
       </div>

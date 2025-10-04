@@ -21,17 +21,29 @@ async function buildStandings() {
       id: true,
       name: true,
       email: true,
-      scores: { select: { points: true } }
+      draftPicks: {
+        include: { castaway: true },
+        orderBy: { round: "asc" }
+      },
+      scores: {
+        select: { points: true }
+      }
     }
   });
 
   return users
-    .map(user => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      totalPoints: user.scores.reduce((sum, score) => sum + score.points, 0)
-    }))
+    .map((user) => {
+      const totalPoints = user.scores.reduce((sum, score) => sum + score.points, 0);
+
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        totalPoints,
+        rawPoints: totalPoints,
+        draftPicks: user.draftPicks
+      };
+    })
     .sort((a, b) => b.totalPoints - a.totalPoints);
 }
 

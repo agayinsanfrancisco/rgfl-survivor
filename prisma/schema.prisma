@@ -8,82 +8,142 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  password    String
-  name        String
-  isAdmin     Boolean  @default(false)
-  leagueId    String?
-  league      League?  @relation(fields: [leagueId], references: [id])
-  picks       Pick[]
-  scores      Score[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String      @id @default(uuid())
+  email      String      @unique
+  password   String
+  name       String
+  isAdmin    Boolean     @default(false)
+  leagueId   String?
+  league     League?     @relation(fields: [leagueId], references: [id])
+  picks      Pick[]
+  scores     Score[]
+  ranking    Ranking?
+  draftPicks DraftPick[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
 model League {
-  id        String   @id @default(uuid())
-  name      String
-  code      String   @unique
-  users     User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String      @id @default(uuid())
+  name          String
+  code          String      @unique
+  users         User[]
+  draftStatus   DraftStatus @default(PENDING)
+  draftRunAt    DateTime?
+  picksPerUser  Int         @default(2)
+  rankingLockAt DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  DraftPick     DraftPick[]
+}
+
+enum DraftStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
 }
 
 model Castaway {
-  id             String         @id @default(uuid())
-  name           String
-  tribe          String?
-  occupation     String?
-  age            Int?
-  hometown       String?
-  imageUrl       String?
-  weeklyResults  WeeklyResult[]
-  picks          Pick[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id            String         @id @default(uuid())
+  name          String
+  tribe         String?
+  occupation    String?
+  age           Int?
+  hometown      String?
+  imageUrl      String?
+  weeklyResults WeeklyResult[]
+  picks         Pick[]
+  draftPicks    DraftPick[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  RankingEntry  RankingEntry[]
 }
 
 model WeeklyResult {
-  id          String     @id @default(uuid())
-  weekNumber  Int
-  points      Int
-  castawayId  String
-  castaway    Castaway   @relation(fields: [castawayId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id         String   @id @default(uuid())
+  weekNumber Int
+  points     Int
+  castawayId String
+  castaway   Castaway @relation(fields: [castawayId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([weekNumber, castawayId])
 }
 
 model Pick {
-  id          String     @id @default(uuid())
-  userId      String
-  castawayId  String
-  weekNumber  Int
-  weekId      String?
-  week        Week?      @relation(fields: [weekId], references: [id])
-  user        User       @relation(fields: [userId], references: [id])
-  castaway    Castaway   @relation(fields: [castawayId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  castawayId String
+  weekNumber Int
+  weekId     String?
+  week       Week?    @relation(fields: [weekId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  castaway   Castaway @relation(fields: [castawayId], references: [id])
+  locked     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Week {
-  id          String     @id @default(uuid())
-  weekNumber  Int
-  isActive    Boolean    @default(false)
-  picks       Pick[]
-  scores      Score[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id         String    @id @default(uuid())
+  weekNumber Int
+  isActive   Boolean   @default(false)
+  lockAt     DateTime?
+  picks      Pick[]
+  scores     Score[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Ranking {
+  id          String         @id @default(uuid())
+  userId      String         @unique
+  user        User           @relation(fields: [userId], references: [id])
+  entries     RankingEntry[]
+  submittedAt DateTime       @default(now())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model RankingEntry {
+  id         String   @id @default(uuid())
+  rankingId  String
+  castawayId String
+  position   Int
+  ranking    Ranking  @relation(fields: [rankingId], references: [id], onDelete: Cascade)
+  castaway   Castaway @relation(fields: [castawayId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([rankingId, position])
+  @@unique([rankingId, castawayId])
+}
+
+model DraftPick {
+  id         String   @id @default(uuid())
+  userId     String
+  castawayId String
+  leagueId   String
+  round      Int
+  pickNumber Int
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  castaway   Castaway @relation(fields: [castawayId], references: [id])
+  league     League   @relation(fields: [leagueId], references: [id])
+
+  @@unique([leagueId, castawayId])
+  @@unique([leagueId, userId, round])
 }
 
 model Score {
-  id          String     @id @default(uuid())
-  userId      String
-  weekId      String
-  points      Int
-  week        Week       @relation(fields: [weekId], references: [id])
-  user        User       @relation(fields: [userId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  weekId    String
+  points    Int
+  week      Week     @relation(fields: [weekId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, weekId])
 }
