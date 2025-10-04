@@ -49,4 +49,27 @@ router.post("/login", async (req, res) => {
         res.status(400).json({ error: err.message || "Login failed" });
     }
 });
+// Get current user
+router.get("/me", async (req, res) => {
+    try {
+        const token = req.headers.authorization?.replace("Bearer ", "");
+        if (!token)
+            return res.status(401).json({ error: "No token" });
+        const payload = jwt.verify(token, SECRET);
+        const user = await prisma.user.findUnique({
+            where: { id: payload.id },
+            select: { id: true, email: true, name: true, isAdmin: true }
+        });
+        if (!user)
+            return res.status(401).json({ error: "User not found" });
+        res.json(user);
+    }
+    catch (err) {
+        res.status(401).json({ error: "Invalid token" });
+    }
+});
+// Logout
+router.post("/logout", (req, res) => {
+    res.json({ message: "Logged out successfully" });
+});
 export default router;

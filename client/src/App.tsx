@@ -14,7 +14,6 @@ import PreseasonRank from "@/pages/PreseasonRank";
 import Leaderboard from "@/pages/Leaderboard";
 import CastawayProfile from "@/pages/CastawayProfile";
 import NotFound from "@/pages/NotFound";
-import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
 // Admin
@@ -29,10 +28,9 @@ import StatsDashboard from "@/pages/admin/StatsDashboard";
 import { routes } from "@/shared/routes";
 
 const App = () => (
-  <AuthProvider>
-    <Router>
-      <Navigation />
-      <Routes>
+  <Router>
+    <Navigation />
+    <Routes>
         <Route path={routes.root} element={<Splash />} />
         <Route path={routes.login} element={<Login />} />
         <Route path={routes.signup} element={<Signup />} />
@@ -59,7 +57,6 @@ const App = () => (
         <Route path={routes.notFound} element={<NotFound />} />
       </Routes>
     </Router>
-  </AuthProvider>
 );
 
 export default App;
