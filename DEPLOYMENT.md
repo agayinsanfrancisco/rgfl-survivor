@@ -41,13 +41,6 @@ The build command includes `npx prisma migrate deploy` which will automatically 
 
 ## Alternative Deployment Methods
 
-### Using Docker
-If you prefer Docker deployment:
-```bash
-docker build -t rgfl-survivor .
-docker run -p 5050:5050 rgfl-survivor
-```
-
 ### Manual Deployment
 1. Run `npm run build` locally
 2. Upload the `dist` folder to your server
