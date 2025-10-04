@@ -51,9 +51,17 @@ app.use("/api/league", leagueRoutes);
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
     const publicPath = path.join(__dirname, '..', 'public');
-    app.use(express.static(publicPath));
+    app.use(express.static(publicPath, {
+        maxAge: 0, // Disable caching for development
+        etag: false
+    }));
     // Serve React app for non-API routes
     app.get('/', (req, res) => {
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
         res.sendFile(path.join(publicPath, 'index.html'));
     });
     // Catch all handler for client-side routing (but not API routes)
@@ -62,6 +70,11 @@ if (process.env.NODE_ENV === 'production') {
         if (req.path.startsWith('/api/')) {
             return next();
         }
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
         res.sendFile(path.join(publicPath, 'index.html'));
     });
 }
