@@ -112,7 +112,7 @@ app.use("/api/setup", setupRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-  const publicPath = path.join(__dirname, '..', 'public');
+  const publicPath = path.join(__dirname, '..', 'dist', 'public');
   app.use(express.static(publicPath, {
     maxAge: 0, // Disable caching for development
     etag: false
