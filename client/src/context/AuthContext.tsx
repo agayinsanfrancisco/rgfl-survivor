@@ -10,7 +10,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     api.get("/api/auth/me")
       .then((res) => setUser(res.data))
-      .catch(() => setUser(null));
+      .catch((error) => {
+        console.log("Auth check failed:", error);
+        setUser(null);
+      });
   }, []);
 
   const login = async (email: string, password: string) => {
