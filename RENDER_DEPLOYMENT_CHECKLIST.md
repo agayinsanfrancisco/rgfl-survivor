@@ -16,7 +16,6 @@
 
 ### 3. Render Configuration Files
 - [x] `render.yaml` created with service and database configuration
-- [x] `Dockerfile` created as alternative deployment method
 - [x] Build and start commands configured
 
 ### 4. Code Issues Fixed
@@ -59,12 +58,6 @@ Set these in your Render service:
 3. Check health check endpoint
 
 ## 🔧 Alternative Deployment Methods
-
-### Using Docker
-```bash
-docker build -t rgfl-survivor .
-docker run -p 5050:5050 rgfl-survivor
-```
 
 ### Manual Deployment
 1. Run `npm run build` locally
