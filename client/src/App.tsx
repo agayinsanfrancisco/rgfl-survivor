@@ -43,7 +43,7 @@ const App = () => (
         <Route path={routes.weeklyResults} element={<ProtectedRoute><WeeklyResults /></ProtectedRoute>} />
         <Route path={routes.preseasonRank} element={<ProtectedRoute><PreseasonRank /></ProtectedRoute>} />
         <Route path={routes.leaderboard} element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-        <Route path={routes.castaway(":id")} element={<ProtectedRoute><CastawayProfile /></ProtectedRoute>} />
+        <Route path="/castaway/:id" element={<ProtectedRoute><CastawayProfile /></ProtectedRoute>} />
 
         <Route path={routes.admin.index} element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path={routes.admin.castaways} element={<AdminRoute><CastawayManager /></AdminRoute>} />

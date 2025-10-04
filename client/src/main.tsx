@@ -8,13 +8,11 @@ import "./styles/global.css";
 
 const root = document.getElementById("root")!;
 createRoot(root).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <AuthProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AuthProvider>
-    </ErrorBoundary>
-  </React.StrictMode>
+  <ErrorBoundary>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
+  </ErrorBoundary>
 );
