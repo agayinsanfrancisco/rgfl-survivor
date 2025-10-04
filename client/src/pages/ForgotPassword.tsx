@@ -20,21 +20,29 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Forgot Password</h2>
-      <form onSubmit={onSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          required
-          style={{ display: "block", marginBottom: 12, width: "100%" }}
-        />
-        <button type="submit">Send Reset Link</button>
-      </form>
-      {status === "sent" && <p style={{ color: "green" }}>Check your inbox!</p>}
-      {status === "error" && <p style={{ color: "crimson" }}>{error}</p>}
+    <div className="rg-page" style={{ display: "grid", placeItems: "center" }}>
+      <div className="rg-section" style={{ maxWidth: 420 }}>
+        <h2 style={{ textAlign: "center", marginTop: 0 }}>Forgot your password?</h2>
+        <p style={{ textAlign: "center", color: "var(--text-muted)" }}>
+          Enter your email and we&apos;ll send you reset instructions.
+        </p>
+        <form onSubmit={onSubmit} style={{ marginTop: "1.5rem", display: "grid", gap: "0.75rem" }}>
+          <label htmlFor="reset-email">Email address</label>
+          <input
+            id="reset-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+          <button type="submit" disabled={status === "loading"}>
+            {status === "loading" ? "Sending..." : "Send reset link"}
+          </button>
+        </form>
+        {status === "sent" && <p style={{ color: "green", marginTop: "0.75rem" }}>Check your inbox!</p>}
+        {status === "error" && <p className="error">{error}</p>}
+      </div>
     </div>
   );
 };

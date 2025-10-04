@@ -8,22 +8,28 @@ export const routes = {
     resetPassword: "/reset-password",
     dashboard: "/dashboard",
     profile: "/profile",
+    preseasonRank: "/preseason-rank",
     weeklyPicks: "/weekly-picks",
     weeklyResults: "/weekly-results",
-    preseasonRank: "/preseason-rank",
     leaderboard: "/leaderboard",
+    league: "/league",
+    about: "/about",
+    contact: "/contact",
+    rules: "/rules",
+    howToPlay: "/how-to-play",
     castaway: (id) => `/castaway/${id}`,
     notFound: "*",
-    // Admin
     admin: {
         index: "/admin",
         dashboard: "/admin",
+        draft: "/admin/draft",
+        picks: "/admin/draft",
         castaways: "/admin/castaways",
         users: "/admin/users",
         league: "/admin/league",
-        picks: "/admin/picks",
-        points: "/admin/points",
+        scoring: "/admin/scoring",
         season: "/admin/season",
-        stats: "/admin/stats"
+        stats: "/admin/stats",
+        announcements: "/admin/announcements"
     }
 };

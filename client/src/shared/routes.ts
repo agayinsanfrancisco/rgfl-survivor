@@ -1,32 +1,38 @@
 // client/src/shared/routes.ts
 
 export const routes = {
-    root: "/",
-    splash: "/",
-    login: "/login",
-    signup: "/signup",
-    forgotPassword: "/forgot-password",
-    resetPassword: "/reset-password",
-    dashboard: "/dashboard",
-    profile: "/profile",
-    weeklyPicks: "/weekly-picks",
-    weeklyResults: "/weekly-results",
-    preseasonRank: "/preseason-rank",
-    leaderboard: "/leaderboard",
-    castaway: (id: string | number) => `/castaway/${id}`,
-    notFound: "*",
-    // Admin
-    admin: {
-      index: "/admin",
-      dashboard: "/admin",
-      castaways: "/admin/castaways",
-      users: "/admin/users",
-      league: "/admin/league",
-      picks: "/admin/picks",
-      points: "/admin/points",
-      season: "/admin/season",
-      stats: "/admin/stats"
-    }
-  } as const;
-  
-  export type RouteKey = keyof typeof routes;
+  root: "/",
+  splash: "/",
+  login: "/login",
+  signup: "/signup",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
+  dashboard: "/dashboard",
+  profile: "/profile",
+  preseasonRank: "/preseason-rank",
+  weeklyPicks: "/weekly-picks",
+  weeklyResults: "/weekly-results",
+  leaderboard: "/leaderboard",
+  league: "/league",
+  about: "/about",
+  contact: "/contact",
+  rules: "/rules",
+  howToPlay: "/how-to-play",
+  castaway: (id: string | number) => `/castaway/${id}`,
+  notFound: "*",
+  admin: {
+    index: "/admin",
+    dashboard: "/admin",
+    draft: "/admin/draft",
+    picks: "/admin/draft",
+    castaways: "/admin/castaways",
+    users: "/admin/users",
+    league: "/admin/league",
+    scoring: "/admin/scoring",
+    season: "/admin/season",
+    stats: "/admin/stats",
+    announcements: "/admin/announcements"
+  }
+} as const;
+
+export type RouteKey = keyof typeof routes;

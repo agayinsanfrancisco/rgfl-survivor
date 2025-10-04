@@ -50,35 +50,45 @@ const PointsManager = () => {
   };
 
   return (
-    <div>
-      <h2>Weekly Scoring</h2>
-      <form onSubmit={submit}>
-        <label>
-          Week Number
-          <input value={weekNumber} onChange={(e) => setWeekNumber(e.target.value)} style={{ marginLeft: 8 }} />
-        </label>
+    <div className="rg-page">
+      <section className="rg-hero">
+        <span className="rg-pill">Weekly Score Entry</span>
+        <h1>Enter episode results and update the leaderboard.</h1>
+      </section>
 
-        <h3>Castaway Points</h3>
-        <div style={{ maxHeight: 320, overflowY: "auto", border: "1px solid #eee", padding: 12 }}>
-          {castaways.map((castaway) => (
-            <div key={castaway.id} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ flex: 1 }}>{castaway.name}</span>
-              <input
-                type="number"
-                value={entries.find((e) => e.castawayId === castaway.id)?.points ?? 0}
-                onChange={(e) => updateEntry(castaway.id, Number(e.target.value))}
-                style={{ width: 80 }}
-              />
-            </div>
-          ))}
-        </div>
+      <section className="rg-section" style={{ marginTop: "3rem" }}>
+        <form onSubmit={submit} style={{ display: "grid", gap: "1.25rem" }}>
+          <label htmlFor="scoring-week" style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+            Week number
+            <input
+              id="scoring-week"
+              value={weekNumber}
+              onChange={(e) => setWeekNumber(e.target.value)}
+              style={{ maxWidth: 120 }}
+            />
+          </label>
 
-        <button type="submit" disabled={status === "saving"}>
-          {status === "saving" ? "Saving..." : "Save Scores"}
-        </button>
-      </form>
-      {status === "success" && <p style={{ color: "green" }}>{message}</p>}
-      {status === "error" && <p style={{ color: "crimson" }}>{message}</p>}
+          <div style={{ maxHeight: 380, overflowY: "auto", border: "1px solid var(--border-soft)", borderRadius: "var(--radius-md)", padding: "1rem" }}>
+            {castaways.map((castaway) => (
+              <div key={castaway.id} style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.75rem" }}>
+                <span style={{ flex: 1 }}>{castaway.name}</span>
+                <input
+                  type="number"
+                  value={entries.find((e) => e.castawayId === castaway.id)?.points ?? 0}
+                  onChange={(e) => updateEntry(castaway.id, Number(e.target.value))}
+                  style={{ width: 96 }}
+                />
+              </div>
+            ))}
+          </div>
+
+          <button type="submit" disabled={status === "saving"}>
+            {status === "saving" ? "Saving..." : "Save Scores"}
+          </button>
+          {status === "success" && <p style={{ color: "green" }}>{message}</p>}
+          {status === "error" && <p className="error">{message}</p>}
+        </form>
+      </section>
     </div>
   );
 };

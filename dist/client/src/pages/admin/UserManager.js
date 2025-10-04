@@ -7,15 +7,15 @@ const UserManager = () => {
     useEffect(() => {
         api
             .get("/api/users")
-            .then(res => {
+            .then((res) => {
             setUsers(res.data);
             setError(null);
         })
-            .catch(err => {
+            .catch((err) => {
             console.error("Failed to load users:", err);
             setError("Unable to load users.");
         });
     }, []);
-    return (_jsxs("div", { children: [_jsx("h2", { children: "All Users" }), error && _jsx("p", { style: { color: "crimson" }, children: error }), _jsxs("table", { children: [_jsx("thead", { children: _jsxs("tr", { children: [_jsx("th", { children: "Name" }), _jsx("th", { children: "Email" }), _jsx("th", { children: "Role" }), _jsx("th", { children: "Joined" })] }) }), _jsx("tbody", { children: users.map(u => (_jsxs("tr", { children: [_jsx("td", { children: u.name }), _jsx("td", { children: u.email }), _jsx("td", { children: u.isAdmin ? "Admin" : "Player" }), _jsx("td", { children: u.createdAt?.slice(0, 10) })] }, u.id))) })] })] }));
+    return (_jsxs("div", { className: "rg-page", children: [_jsxs("section", { className: "rg-hero", children: [_jsx("span", { className: "rg-pill", children: "User Management" }), _jsx("h1", { children: "See every Survivor fan in the league." }), _jsx("p", { children: "Manage player accounts, confirm admin access, and keep contact info tidy before big announcements or draft day." })] }), _jsxs("section", { className: "rg-section", style: { marginTop: "3rem" }, children: [error && _jsx("p", { className: "error", children: error }), _jsxs("table", { children: [_jsx("thead", { children: _jsxs("tr", { children: [_jsx("th", { children: "Name" }), _jsx("th", { children: "Email" }), _jsx("th", { children: "Role" }), _jsx("th", { children: "Joined" })] }) }), _jsx("tbody", { children: users.map((u) => (_jsxs("tr", { children: [_jsx("td", { children: u.name }), _jsx("td", { children: u.email }), _jsx("td", { children: u.isAdmin ? "Admin" : "Player" }), _jsx("td", { children: u.createdAt?.slice(0, 10) })] }, u.id))) })] })] })] }));
 };
 export default UserManager;

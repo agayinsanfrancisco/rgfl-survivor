@@ -17,10 +17,10 @@ const LeagueManager = () => {
         });
     }, []);
     if (error) {
-        return _jsx("div", { style: { color: "crimson" }, children: error });
+        return _jsx("div", { className: "rg-page", style: { color: "crimson" }, children: error });
     }
     if (!league)
-        return _jsx("div", { children: "Loading..." });
-    return (_jsxs("div", { children: [_jsx("h2", { children: "League Settings" }), _jsxs("p", { children: [_jsx("strong", { children: "Name:" }), " ", league.name] }), _jsxs("p", { children: [_jsx("strong", { children: "Code:" }), " ", league.code] }), _jsxs("p", { children: [_jsx("strong", { children: "Members:" }), " ", league.users.length] }), _jsxs("table", { children: [_jsx("thead", { children: _jsxs("tr", { children: [_jsx("th", { children: "Name" }), _jsx("th", { children: "Email" }), _jsx("th", { children: "Role" })] }) }), _jsx("tbody", { children: league.users.map((member) => (_jsxs("tr", { children: [_jsx("td", { children: member.name }), _jsx("td", { children: member.email }), _jsx("td", { children: member.isAdmin ? "Admin" : "Player" })] }, member.id))) })] })] }));
+        return _jsx("div", { className: "rg-page", children: "Loading..." });
+    return (_jsxs("div", { className: "rg-page", children: [_jsxs("section", { className: "rg-hero", children: [_jsx("span", { className: "rg-pill", children: "League Settings" }), _jsx("h1", { children: league.name }), _jsxs("p", { children: ["League code: ", league.code, " \u00B7 Total members: ", league.users.length] })] }), _jsx("section", { className: "rg-section", style: { marginTop: "3rem" }, children: _jsxs("table", { children: [_jsx("thead", { children: _jsxs("tr", { children: [_jsx("th", { children: "Name" }), _jsx("th", { children: "Email" }), _jsx("th", { children: "Role" })] }) }), _jsx("tbody", { children: league.users.map((member) => (_jsxs("tr", { children: [_jsx("td", { children: member.name }), _jsx("td", { children: member.email }), _jsx("td", { children: member.isAdmin ? "Admin" : "Player" })] }, member.id))) })] }) })] }));
 };
 export default LeagueManager;

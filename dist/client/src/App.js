@@ -1,5 +1,5 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { Routes, Route } from "react-router-dom";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Navigation from "@/components/Navigation";
 import Splash from "@/pages/Splash";
@@ -27,11 +27,24 @@ import PointsManager from "@/pages/admin/PointsManager";
 import SeasonManager from "@/pages/admin/SeasonManager";
 import StatsDashboard from "@/pages/admin/StatsDashboard";
 import { routes } from "@/shared/routes";
+import About from "@/pages/About";
+import HowToPlay from "@/pages/HowToPlay";
+import Contact from "@/pages/Contact";
+import Rules from "@/pages/Rules";
+import LeagueOverview from "@/pages/LeagueOverview";
 const App = () => {
     const { loading } = useAuth();
+    const location = useLocation();
+    const hideChromeRoutes = new Set([
+        routes.login,
+        routes.signup,
+        routes.forgotPassword,
+        routes.resetPassword
+    ]);
+    const showChrome = !hideChromeRoutes.has(location.pathname);
     if (loading) {
         return _jsx("div", { className: "container", children: "Loading..." });
     }
-    return (_jsxs(_Fragment, { children: [_jsx(Navigation, {}), _jsxs(Routes, { children: [_jsx(Route, { path: routes.root, element: _jsx(Splash, {}) }), _jsx(Route, { path: routes.login, element: _jsx(Login, {}) }), _jsx(Route, { path: routes.signup, element: _jsx(Signup, {}) }), _jsx(Route, { path: routes.forgotPassword, element: _jsx(ForgotPassword, {}) }), _jsx(Route, { path: routes.resetPassword, element: _jsx(ResetPassword, {}) }), _jsx(Route, { path: routes.dashboard, element: _jsx(ProtectedRoute, { children: _jsx(Dashboard, {}) }) }), _jsx(Route, { path: routes.profile, element: _jsx(ProtectedRoute, { children: _jsx(Profile, {}) }) }), _jsx(Route, { path: routes.weeklyPicks, element: _jsx(ProtectedRoute, { children: _jsx(WeeklyPicks, {}) }) }), _jsx(Route, { path: routes.weeklyResults, element: _jsx(ProtectedRoute, { children: _jsx(WeeklyResults, {}) }) }), _jsx(Route, { path: routes.preseasonRank, element: _jsx(ProtectedRoute, { children: _jsx(PreseasonRank, {}) }) }), _jsx(Route, { path: routes.leaderboard, element: _jsx(ProtectedRoute, { children: _jsx(Leaderboard, {}) }) }), _jsx(Route, { path: "/castaway/:id", element: _jsx(ProtectedRoute, { children: _jsx(CastawayProfile, {}) }) }), _jsx(Route, { path: routes.admin.index, element: _jsx(AdminRoute, { children: _jsx(AdminDashboard, {}) }) }), _jsx(Route, { path: routes.admin.castaways, element: _jsx(AdminRoute, { children: _jsx(CastawayManager, {}) }) }), _jsx(Route, { path: routes.admin.users, element: _jsx(AdminRoute, { children: _jsx(UserManager, {}) }) }), _jsx(Route, { path: routes.admin.league, element: _jsx(AdminRoute, { children: _jsx(LeagueManager, {}) }) }), _jsx(Route, { path: routes.admin.picks, element: _jsx(AdminRoute, { children: _jsx(PicksManager, {}) }) }), _jsx(Route, { path: routes.admin.points, element: _jsx(AdminRoute, { children: _jsx(PointsManager, {}) }) }), _jsx(Route, { path: routes.admin.season, element: _jsx(AdminRoute, { children: _jsx(SeasonManager, {}) }) }), _jsx(Route, { path: routes.admin.stats, element: _jsx(AdminRoute, { children: _jsx(StatsDashboard, {}) }) }), _jsx(Route, { path: routes.notFound, element: _jsx(NotFound, {}) })] })] }));
+    return (_jsxs("div", { className: "rg-app", children: [showChrome && _jsx(Navigation, {}), _jsxs(Routes, { children: [_jsx(Route, { path: routes.root, element: _jsx(Splash, {}) }), _jsx(Route, { path: routes.login, element: _jsx(Login, {}) }), _jsx(Route, { path: routes.signup, element: _jsx(Signup, {}) }), _jsx(Route, { path: routes.forgotPassword, element: _jsx(ForgotPassword, {}) }), _jsx(Route, { path: routes.resetPassword, element: _jsx(ResetPassword, {}) }), _jsx(Route, { path: routes.about, element: _jsx(About, {}) }), _jsx(Route, { path: routes.contact, element: _jsx(Contact, {}) }), _jsx(Route, { path: routes.rules, element: _jsx(Rules, {}) }), _jsx(Route, { path: routes.howToPlay, element: _jsx(HowToPlay, {}) }), _jsx(Route, { path: routes.league, element: _jsx(LeagueOverview, {}) }), _jsx(Route, { path: routes.dashboard, element: _jsx(ProtectedRoute, { children: _jsx(Dashboard, {}) }) }), _jsx(Route, { path: routes.profile, element: _jsx(ProtectedRoute, { children: _jsx(Profile, {}) }) }), _jsx(Route, { path: routes.weeklyPicks, element: _jsx(ProtectedRoute, { children: _jsx(WeeklyPicks, {}) }) }), _jsx(Route, { path: routes.weeklyResults, element: _jsx(ProtectedRoute, { children: _jsx(WeeklyResults, {}) }) }), _jsx(Route, { path: routes.preseasonRank, element: _jsx(ProtectedRoute, { children: _jsx(PreseasonRank, {}) }) }), _jsx(Route, { path: routes.leaderboard, element: _jsx(ProtectedRoute, { children: _jsx(Leaderboard, {}) }) }), _jsx(Route, { path: "/castaway/:id", element: _jsx(ProtectedRoute, { children: _jsx(CastawayProfile, {}) }) }), _jsx(Route, { path: routes.admin.index, element: _jsx(AdminRoute, { children: _jsx(AdminDashboard, {}) }) }), _jsx(Route, { path: routes.admin.castaways, element: _jsx(AdminRoute, { children: _jsx(CastawayManager, {}) }) }), _jsx(Route, { path: routes.admin.users, element: _jsx(AdminRoute, { children: _jsx(UserManager, {}) }) }), _jsx(Route, { path: routes.admin.league, element: _jsx(AdminRoute, { children: _jsx(LeagueManager, {}) }) }), _jsx(Route, { path: routes.admin.picks, element: _jsx(AdminRoute, { children: _jsx(PicksManager, {}) }) }), _jsx(Route, { path: routes.admin.scoring, element: _jsx(AdminRoute, { children: _jsx(PointsManager, {}) }) }), _jsx(Route, { path: routes.admin.season, element: _jsx(AdminRoute, { children: _jsx(SeasonManager, {}) }) }), _jsx(Route, { path: routes.admin.stats, element: _jsx(AdminRoute, { children: _jsx(StatsDashboard, {}) }) }), _jsx(Route, { path: routes.notFound, element: _jsx(NotFound, {}) })] }), showChrome && (_jsx("footer", { className: "rg-footer", children: "Reality Games Fantasy League \u00B7 Outwit \u00B7 Outplay \u00B7 Outscore" }))] }));
 };
 export default App;

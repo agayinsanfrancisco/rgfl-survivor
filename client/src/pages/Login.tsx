@@ -22,31 +22,45 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="container" style={{ maxWidth: 400, margin: "0 auto" }}>
-      <h2>Login</h2>
-      <form onSubmit={onSubmit}>
-        <input
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-          style={{ display: "block", marginBottom: 12, width: "100%" }}
-        />
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-          style={{ display: "block", marginBottom: 12, width: "100%" }}
-        />
-        {err && <div style={{ color: "crimson", marginBottom: 8 }}>{err}</div>}
-        <button type="submit" style={{ marginRight: 12 }}>Login</button>
-        <Link to={routes.forgotPassword}>Forgot password?</Link>
-      </form>
+    <div className="rg-page" style={{ display: "grid", placeItems: "center" }}>
+      <div className="rg-section" style={{ maxWidth: 420 }}>
+        <h2 style={{ textAlign: "center", marginTop: 0 }}>Login</h2>
+        <p style={{ textAlign: "center", color: "var(--text-muted)" }}>
+          Log in to set your weekly picks and track the leaderboard.
+        </p>
+        <form onSubmit={onSubmit} style={{ marginTop: "1.5rem", display: "grid", gap: "0.75rem" }}>
+          <label htmlFor="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+          />
+          {err && <div className="error">{err}</div>}
+          <button type="submit" disabled={!email || !password}>
+            Login
+          </button>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
+            <span>
+              Don&apos;t have an account? <Link to={routes.signup}>Sign up</Link>
+            </span>
+            <Link to={routes.forgotPassword}>Forgot password?</Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

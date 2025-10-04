@@ -67,66 +67,49 @@ const WeeklyPicks: React.FC = () => {
     : undefined;
 
   return (
-    <div className="container">
-      <h2>Weekly Pick</h2>
-      {weekInfo && <p>Week {weekInfo.weekNumber}</p>}
-      {lockMessage && <p>{lockMessage}</p>}
-      <p>Select one of your drafted castaways to be active this week:</p>
+    <div className="rg-page">
+      <section className="rg-hero">
+        <span className="rg-pill">Weekly Picks</span>
+        <h1>Week {weekInfo?.weekNumber ?? "--"} — Choose your active castaway</h1>
+        <p>
+          Make your selection before the lock deadline. Only drafted castaways are eligible each week, and once the
+          episode airs, your points are locked in.
+        </p>
+        {lockMessage && <p style={{ color: "var(--text-muted)" }}>{lockMessage}</p>}
+      </section>
 
-      <div className="castaway-grid">
-        {assigned.map((assignment) => (
-          <div
-            key={assignment.castawayId}
-            className={`castaway-card ${selectedId === assignment.castawayId ? "selected" : ""}`}
-            onClick={() => setSelectedId(assignment.castawayId)}
-          >
-            <img src={assignment.castaway.imageUrl || "/default-avatar.png"} alt={assignment.castaway.name} className="avatar" />
-            <h4>{assignment.castaway.name}</h4>
-            <p>{assignment.castaway.tribe}</p>
-            <p>Round {assignment.round}</p>
-          </div>
-        ))}
-      </div>
-
-      <button
-        className="button"
-        onClick={handleSubmit}
-        disabled={!selectedId || status === "saving"}
-        style={{ marginTop: 24 }}
-      >
-        {status === "saving" ? "Submitting..." : "Submit Pick"}
-      </button>
-
-      {status === "success" && <p style={{ color: "green" }}>Pick submitted successfully!</p>}
-      {errorMessage && <p style={{ color: "crimson" }}>{errorMessage}</p>}
-
-      <style>{`
-        .castaway-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: 16px;
-          margin-top: 20px;
-        }
-        .castaway-card {
-          cursor: pointer;
-          border: 2px solid #ccc;
-          border-radius: 12px;
-          padding: 12px;
-          text-align: center;
-          transition: 0.2s ease;
-        }
-        .castaway-card.selected {
-          border-color: #007bff;
-          background-color: #eaf3ff;
-        }
-        .avatar {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          border-radius: 50%;
-          margin-bottom: 8px;
-        }
-      `}</style>
+      <section className="rg-section" style={{ marginTop: "3rem" }}>
+        {errorMessage && <p className="error">{errorMessage}</p>}
+        <div className="rg-grid rg-grid--two" style={{ gap: "1.5rem" }}>
+          {assigned.map((assignment) => {
+            const active = selectedId === assignment.castawayId;
+            return (
+              <article
+                key={assignment.castawayId}
+                className="rg-card"
+                style={{
+                  border: active ? `2px solid var(--brand-red)` : undefined,
+                  cursor: "pointer"
+                }}
+                onClick={() => setSelectedId(assignment.castawayId)}
+              >
+                <h3>{assignment.castaway.name}</h3>
+                <p style={{ color: "var(--text-muted)", marginBottom: "0.75rem" }}>{assignment.castaway.tribe ?? ""}</p>
+                <p>Round {assignment.round}</p>
+              </article>
+            );
+          })}
+          {assigned.length === 0 && (
+            <p>No draft picks assigned yet. The draft will run as soon as rankings are locked.</p>
+          )}
+        </div>
+        <div style={{ marginTop: "2rem" }}>
+          <button onClick={handleSubmit} disabled={!selectedId || status === "saving"}>
+            {status === "saving" ? "Submitting..." : "Submit Pick"}
+          </button>
+          {status === "success" && <p style={{ color: "green", marginTop: "0.75rem" }}>Pick submitted successfully!</p>}
+        </div>
+      </section>
     </div>
   );
 };

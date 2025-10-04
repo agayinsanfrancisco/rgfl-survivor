@@ -22,25 +22,38 @@ const CastawayProfile: React.FC = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="container">Loading castaway...</div>;
-  if (err) return <div className="container" style={{ color: "crimson" }}>{err}</div>;
-  if (!castaway) return <div className="container">Castaway not found.</div>;
+  if (loading) return <div className="rg-page">Loading castaway...</div>;
+  if (err) return <div className="rg-page" style={{ color: "crimson" }}>{err}</div>;
+  if (!castaway) return <div className="rg-page">Castaway not found.</div>;
 
   return (
-    <div className="container">
-      <Link to={routes.dashboard}>&larr; Back to Dashboard</Link>
-      <h2>{castaway.name}</h2>
-      <table>
-        <tbody>
-          <tr><th>Tribe:</th><td>{castaway.tribe}</td></tr>
-          <tr><th>Age:</th><td>{castaway.age}</td></tr>
-          <tr><th>Occupation:</th><td>{castaway.occupation}</td></tr>
-          <tr><th>Hometown:</th><td>{castaway.hometown}</td></tr>
-        </tbody>
-      </table>
-      <div style={{ marginTop: "2em" }}>
-        <Link to={routes.weeklyPicks} className="button">Make Weekly Picks</Link>
-      </div>
+    <div className="rg-page">
+      <section className="rg-section" style={{ maxWidth: 600 }}>
+        <Link to={routes.dashboard} style={{ marginBottom: "1rem", display: "inline-flex" }}>
+          &larr; Back to dashboard
+        </Link>
+        <h2>{castaway.name}</h2>
+        <p style={{ color: "var(--text-muted)" }}>{castaway.tribe ? `${castaway.tribe} tribe` : ""}</p>
+        <div className="rg-grid" style={{ marginTop: "1.5rem" }}>
+          <div className="rg-card">
+            <strong>Age</strong>
+            <p>{castaway.age ?? "–"}</p>
+          </div>
+          <div className="rg-card">
+            <strong>Occupation</strong>
+            <p>{castaway.occupation ?? "–"}</p>
+          </div>
+          <div className="rg-card">
+            <strong>Hometown</strong>
+            <p>{castaway.hometown ?? "–"}</p>
+          </div>
+        </div>
+        <div style={{ marginTop: "2rem" }}>
+          <Link to={routes.weeklyPicks}>
+            <button>Set Weekly Pick</button>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 };

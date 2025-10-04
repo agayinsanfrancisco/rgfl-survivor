@@ -16,40 +16,49 @@ const UserManager = () => {
   useEffect(() => {
     api
       .get("/api/users")
-      .then(res => {
+      .then((res) => {
         setUsers(res.data);
         setError(null);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to load users:", err);
         setError("Unable to load users.");
       });
   }, []);
 
   return (
-    <div>
-      <h2>All Users</h2>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Joined</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(u => (
-            <tr key={u.id}>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.isAdmin ? "Admin" : "Player"}</td>
-              <td>{u.createdAt?.slice(0, 10)}</td>
+    <div className="rg-page">
+      <section className="rg-hero">
+        <span className="rg-pill">User Management</span>
+        <h1>See every Survivor fan in the league.</h1>
+        <p>
+          Manage player accounts, confirm admin access, and keep contact info tidy before big announcements or draft day.
+        </p>
+      </section>
+
+      <section className="rg-section" style={{ marginTop: "3rem" }}>
+        {error && <p className="error">{error}</p>}
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((u) => (
+              <tr key={u.id}>
+                <td>{u.name}</td>
+                <td>{u.email}</td>
+                <td>{u.isAdmin ? "Admin" : "Player"}</td>
+                <td>{u.createdAt?.slice(0, 10)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
     </div>
   );
 };

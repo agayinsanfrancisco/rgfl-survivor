@@ -25,22 +25,30 @@ const ResetPassword: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Reset Password</h2>
-      <form onSubmit={onSubmit}>
-        <input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="New Password"
-          required
-          minLength={6}
-          style={{ display: "block", marginBottom: 12, width: "100%" }}
-        />
-        <button type="submit">Reset Password</button>
-      </form>
-      {status === "success" && <p>Password reset successfully!</p>}
-      {status === "error" && <p style={{ color: "crimson" }}>{error}</p>}
+    <div className="rg-page" style={{ display: "grid", placeItems: "center" }}>
+      <div className="rg-section" style={{ maxWidth: 420 }}>
+        <h2 style={{ textAlign: "center", marginTop: 0 }}>Set a new password</h2>
+        <p style={{ textAlign: "center", color: "var(--text-muted)" }}>
+          Enter a new password for your Reality Games account.
+        </p>
+        <form onSubmit={onSubmit} style={{ marginTop: "1.5rem", display: "grid", gap: "0.75rem" }}>
+          <label htmlFor="new-password">New password</label>
+          <input
+            id="new-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Create a secure password"
+            required
+            minLength={6}
+          />
+          <button type="submit" disabled={status === "saving"}>
+            {status === "saving" ? "Saving..." : "Reset password"}
+          </button>
+        </form>
+        {status === "success" && <p style={{ color: "green", marginTop: "0.75rem" }}>Password reset successfully.</p>}
+        {status === "error" && <p className="error">{error}</p>}
+      </div>
     </div>
   );
 };

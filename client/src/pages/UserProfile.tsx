@@ -4,27 +4,35 @@ import { useAuth } from "../context/AuthContext";
 const UserProfile: React.FC = () => {
   const { user } = useAuth();
 
-  if (!user) return <div className="container">You are not logged in.</div>;
+  if (!user) return <div className="rg-page">You are not logged in.</div>;
 
   return (
-    <div className="container">
-      <h2>User Profile</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th>Name:</th>
-            <td>{user.name}</td>
-          </tr>
-          <tr>
-            <th>Email:</th>
-            <td>{user.email}</td>
-          </tr>
-          <tr>
-            <th>Admin:</th>
-            <td>{user.isAdmin ? "Yes" : "No"}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div className="rg-page">
+      <section className="rg-hero" style={{ maxWidth: 640 }}>
+        <span className="rg-pill">Profile</span>
+        <h1>Welcome, {user.name}</h1>
+        <p>
+          Keep your contact info up to date and review your league credentials. Profile editing is coming in a future
+          release.
+        </p>
+      </section>
+
+      <section className="rg-section" style={{ marginTop: "3rem", maxWidth: 640 }}>
+        <div className="rg-grid">
+          <article className="rg-card">
+            <h3>Name</h3>
+            <p>{user.name}</p>
+          </article>
+          <article className="rg-card">
+            <h3>Email</h3>
+            <p>{user.email}</p>
+          </article>
+          <article className="rg-card">
+            <h3>Role</h3>
+            <p>{user.isAdmin ? "League Admin" : "Player"}</p>
+          </article>
+        </div>
+      </section>
     </div>
   );
 };

@@ -57,32 +57,12 @@ const WeeklyPicks = () => {
     const lockMessage = weekInfo?.lockAt
         ? `Picks lock at ${new Date(weekInfo.lockAt).toLocaleString()}`
         : undefined;
-    return (_jsxs("div", { className: "container", children: [_jsx("h2", { children: "Weekly Pick" }), weekInfo && _jsxs("p", { children: ["Week ", weekInfo.weekNumber] }), lockMessage && _jsx("p", { children: lockMessage }), _jsx("p", { children: "Select one of your drafted castaways to be active this week:" }), _jsx("div", { className: "castaway-grid", children: assigned.map((assignment) => (_jsxs("div", { className: `castaway-card ${selectedId === assignment.castawayId ? "selected" : ""}`, onClick: () => setSelectedId(assignment.castawayId), children: [_jsx("img", { src: assignment.castaway.imageUrl || "/default-avatar.png", alt: assignment.castaway.name, className: "avatar" }), _jsx("h4", { children: assignment.castaway.name }), _jsx("p", { children: assignment.castaway.tribe }), _jsxs("p", { children: ["Round ", assignment.round] })] }, assignment.castawayId))) }), _jsx("button", { className: "button", onClick: handleSubmit, disabled: !selectedId || status === "saving", style: { marginTop: 24 }, children: status === "saving" ? "Submitting..." : "Submit Pick" }), status === "success" && _jsx("p", { style: { color: "green" }, children: "Pick submitted successfully!" }), errorMessage && _jsx("p", { style: { color: "crimson" }, children: errorMessage }), _jsx("style", { children: `
-        .castaway-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: 16px;
-          margin-top: 20px;
-        }
-        .castaway-card {
-          cursor: pointer;
-          border: 2px solid #ccc;
-          border-radius: 12px;
-          padding: 12px;
-          text-align: center;
-          transition: 0.2s ease;
-        }
-        .castaway-card.selected {
-          border-color: #007bff;
-          background-color: #eaf3ff;
-        }
-        .avatar {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          border-radius: 50%;
-          margin-bottom: 8px;
-        }
-      ` })] }));
+    return (_jsxs("div", { className: "rg-page", children: [_jsxs("section", { className: "rg-hero", children: [_jsx("span", { className: "rg-pill", children: "Weekly Picks" }), _jsxs("h1", { children: ["Week ", weekInfo?.weekNumber ?? "--", " \u2014 Choose your active castaway"] }), _jsx("p", { children: "Make your selection before the lock deadline. Only drafted castaways are eligible each week, and once the episode airs, your points are locked in." }), lockMessage && _jsx("p", { style: { color: "var(--text-muted)" }, children: lockMessage })] }), _jsxs("section", { className: "rg-section", style: { marginTop: "3rem" }, children: [errorMessage && _jsx("p", { className: "error", children: errorMessage }), _jsxs("div", { className: "rg-grid rg-grid--two", style: { gap: "1.5rem" }, children: [assigned.map((assignment) => {
+                                const active = selectedId === assignment.castawayId;
+                                return (_jsxs("article", { className: "rg-card", style: {
+                                        border: active ? `2px solid var(--brand-red)` : undefined,
+                                        cursor: "pointer"
+                                    }, onClick: () => setSelectedId(assignment.castawayId), children: [_jsx("h3", { children: assignment.castaway.name }), _jsx("p", { style: { color: "var(--text-muted)", marginBottom: "0.75rem" }, children: assignment.castaway.tribe ?? "" }), _jsxs("p", { children: ["Round ", assignment.round] })] }, assignment.castawayId));
+                            }), assigned.length === 0 && (_jsx("p", { children: "No draft picks assigned yet. The draft will run as soon as rankings are locked." }))] }), _jsxs("div", { style: { marginTop: "2rem" }, children: [_jsx("button", { onClick: handleSubmit, disabled: !selectedId || status === "saving", children: status === "saving" ? "Submitting..." : "Submit Pick" }), status === "success" && _jsx("p", { style: { color: "green", marginTop: "0.75rem" }, children: "Pick submitted successfully!" })] })] })] }));
 };
 export default WeeklyPicks;

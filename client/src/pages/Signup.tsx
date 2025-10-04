@@ -25,15 +25,50 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Sign Up</h2>
-      <form onSubmit={onSubmit}>
-        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Name" required style={{ display: "block", marginBottom: 12, width: "100%" }} />
-        <input type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required style={{ display: "block", marginBottom: 12, width: "100%" }} />
-        <input type="password" autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required minLength={6} style={{ display: "block", marginBottom: 12, width: "100%" }} />
-        {err && <div style={{ color: "crimson", marginBottom: 8 }}>{err}</div>}
-        <button type="submit">Sign Up</button>
-      </form>
+    <div className="rg-page" style={{ display: "grid", placeItems: "center" }}>
+      <div className="rg-section" style={{ maxWidth: 420 }}>
+        <h2 style={{ textAlign: "center", marginTop: 0 }}>Sign up</h2>
+        <p style={{ textAlign: "center", color: "var(--text-muted)" }}>
+          Free, fast, and just a minute away from the draft board.
+        </p>
+        <form onSubmit={onSubmit} style={{ marginTop: "1.5rem", display: "grid", gap: "0.75rem" }}>
+          <label htmlFor="name">Display name</label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+            required
+          />
+          <label htmlFor="signup-email">Email address</label>
+          <input
+            id="signup-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+          <label htmlFor="signup-password">Password</label>
+          <input
+            id="signup-password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Create a password"
+            required
+            minLength={6}
+          />
+          {err && <div className="error">{err}</div>}
+          <button type="submit">Create account</button>
+          <div style={{ textAlign: "center", fontSize: "0.9rem" }}>
+            Already have an account? <a onClick={() => navigate(routes.login)}>Login</a>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

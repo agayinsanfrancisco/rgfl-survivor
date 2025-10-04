@@ -56,30 +56,41 @@ const PreseasonRank: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Preseason Rankings</h2>
-      {locked && <p style={{ color: "crimson" }}>Rankings are locked. Await draft results.</p>}
-      <ol>
-        {rows.map((row, index) => (
-          <li key={row.castawayId} style={{ marginBottom: 8 }}>
-            <strong>{index + 1}.</strong> {row.castaway.name}
-            <button onClick={() => move(index, index - 1)} disabled={locked || index === 0} style={{ marginLeft: 8 }}>
-              ↑
-            </button>
-            <button
-              onClick={() => move(index, index + 1)}
-              disabled={locked || index === rows.length - 1}
-              style={{ marginLeft: 4 }}
-            >
-              ↓
-            </button>
-          </li>
-        ))}
-      </ol>
-      <button onClick={save} disabled={locked || saving}>
-        {saving ? "Saving..." : "Save Rankings"}
-      </button>
-      {message && <p style={{ marginTop: 12 }}>{message}</p>}
+    <div className="rg-page">
+      <section className="rg-hero" style={{ maxWidth: 720 }}>
+        <span className="rg-pill">Preseason Rankings</span>
+        <h1>Drag and drop your castaway big board.</h1>
+        <p>
+          Your ranking determines draft order once the admin launches the snake draft. Make sure every castaway is
+          ordered before the deadline.
+        </p>
+        {locked && <p style={{ color: "crimson" }}>Rankings are locked. Await draft results.</p>}
+      </section>
+
+      <section className="rg-section" style={{ marginTop: "3rem", maxWidth: 720 }}>
+        <ol style={{ paddingLeft: "1.25rem", display: "grid", gap: "0.75rem" }}>
+          {rows.map((row, index) => (
+            <li key={row.castawayId} className="rg-card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <span style={{ fontWeight: 700 }}>{index + 1}</span>
+              <span style={{ flex: 1 }}>{row.castaway.name}</span>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <button onClick={() => move(index, index - 1)} disabled={locked || index === 0}>
+                  ↑
+                </button>
+                <button onClick={() => move(index, index + 1)} disabled={locked || index === rows.length - 1}>
+                  ↓
+                </button>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div style={{ marginTop: "1.5rem" }}>
+          <button onClick={save} disabled={locked || saving}>
+            {saving ? "Saving..." : "Save Rankings"}
+          </button>
+          {message && <p style={{ marginTop: 12 }}>{message}</p>}
+        </div>
+      </section>
     </div>
   );
 };

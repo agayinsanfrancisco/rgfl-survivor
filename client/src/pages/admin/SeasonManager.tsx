@@ -22,29 +22,40 @@ const SeasonManager = () => {
   };
 
   return (
-    <div>
-      <h2>Season Manager</h2>
-      <form onSubmit={createWeek}>
-        <input
-          placeholder="Week Number"
-          value={weekNumber}
-          onChange={e => setWeekNumber(e.target.value)}
-          required
-        />
-        <label>
+    <div className="rg-page">
+      <section className="rg-hero">
+        <span className="rg-pill">Season Controls</span>
+        <h1>Warm up the torches.</h1>
+        <p>
+          Activate the current week or schedule future lock dates. Weeks created here drive weekly picks and scoring.
+        </p>
+      </section>
+
+      <section className="rg-section" style={{ marginTop: "3rem", maxWidth: 420 }}>
+        <form onSubmit={createWeek} style={{ display: "grid", gap: "0.75rem" }}>
+          <label htmlFor="season-week">Week number</label>
           <input
-            type="checkbox"
-            checked={isActive}
-            onChange={e => setIsActive(e.target.checked)}
+            id="season-week"
+            placeholder="Week number"
+            value={weekNumber}
+            onChange={(e) => setWeekNumber(e.target.value)}
+            required
           />
-          Active Week
-        </label>
-        <button type="submit" disabled={status === "saving"}>
-          {status === "saving" ? "Saving..." : "Save Week"}
-        </button>
-      </form>
-      {status === "success" && <p style={{ color: "green" }}>Week saved!</p>}
-      {status === "error" && <p style={{ color: "crimson" }}>Failed to save week.</p>}
+          <label style={{ display: "flex", gap: "0.65rem", alignItems: "center" }}>
+            <input
+              type="checkbox"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+            />
+            Active week
+          </label>
+          <button type="submit" disabled={status === "saving"}>
+            {status === "saving" ? "Saving..." : "Save week"}
+          </button>
+        </form>
+        {status === "success" && <p style={{ color: "green", marginTop: "0.75rem" }}>Week saved!</p>}
+        {status === "error" && <p className="error">Failed to save week.</p>}
+      </section>
     </div>
   );
 };

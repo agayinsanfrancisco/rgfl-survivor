@@ -19,134 +19,134 @@ async function main() {
 
   // Create castaways (Survivor 49 contestants)
   const castaways = [
-    // Kele Tribe (Yellow)
+    // Hina Tribe (Blue)
     {
-      name: 'Nicole Mazullo',
-      tribe: 'Kele',
-      occupation: 'Financial Crime Consultant',
-      age: 26,
-      hometown: 'Philadelphia, PA'
+      name: 'Jason Treul',
+      tribe: 'Hina',
+      occupation: 'Law clerk',
+      age: 32,
+      hometown: 'Anaheim, CA → Santa Ana, CA'
     },
+    {
+      name: 'Kristina Mills',
+      tribe: 'Hina',
+      occupation: 'MBA career coach',
+      age: 36,
+      hometown: 'Houston, TX → Edmond, OK'
+    },
+    {
+      name: 'Matt Williams',
+      tribe: 'Hina',
+      occupation: 'Airport ramp agent',
+      age: 52,
+      hometown: 'Farmington, UT → St. George, UT'
+    },
+    {
+      name: 'Michelle "MC" Chukwujekwu',
+      tribe: 'Hina',
+      occupation: 'Fitness trainer',
+      age: 29,
+      hometown: 'Sachse, TX → San Diego, CA'
+    },
+    {
+      name: 'Sophie Segreti',
+      tribe: 'Hina',
+      occupation: 'Strategy associate',
+      age: 31,
+      hometown: 'Darnestown, MD → New York City, NY'
+    },
+    {
+      name: 'Steven Ramm',
+      tribe: 'Hina',
+      occupation: 'Rocket scientist',
+      age: 35,
+      hometown: 'Littleton, CO → Denver, CO'
+    },
+    // Kele Tribe (Yellow)
     {
       name: 'Alex Moore',
       tribe: 'Kele',
-      occupation: 'Political Comms Director',
-      age: 26,
-      hometown: 'Washington, DC'
+      occupation: 'Political communications director',
+      age: 27,
+      hometown: 'Evanston, IL → Washington, DC'
     },
     {
-      name: 'Annie Davis',
+      name: 'Kimberly "Annie" Davis',
       tribe: 'Kele',
       occupation: 'Musician',
       age: 49,
-      hometown: 'Austin, TX'
+      hometown: 'Portland, OR → Austin, TX'
     },
     {
       name: 'Jake Latimer',
       tribe: 'Kele',
-      occupation: 'Correctional Officer',
-      age: 35,
-      hometown: 'St. Albert, AB'
+      occupation: 'Correctional officer',
+      age: 36,
+      hometown: 'Regina, SK → St. Albert, AB'
     },
     {
       name: 'Jeremiah Ing',
       tribe: 'Kele',
-      occupation: 'Global Events Manager',
-      age: 38,
-      hometown: 'Toronto, ON'
+      occupation: 'Global events manager',
+      age: 39,
+      hometown: 'Windsor, ON → Toronto, ON'
+    },
+    {
+      name: 'Nicole Mazullo',
+      tribe: 'Kele',
+      occupation: 'Financial crime consultant',
+      age: 26,
+      hometown: 'Long Island, NY → Philadelphia, PA'
     },
     {
       name: 'Sophi Balerdi',
       tribe: 'Kele',
       occupation: 'Entrepreneur',
       age: 27,
-      hometown: 'Miami, FL'
-    },
-    // Hina Tribe (Blue)
-    {
-      name: 'Jason Treul',
-      tribe: 'Hina',
-      occupation: 'Law Clerk',
-      age: 32,
-      hometown: 'Santa Ana, CA'
-    },
-    {
-      name: 'Kristina Mills',
-      tribe: 'Hina',
-      occupation: 'MBA Career Coach',
-      age: 35,
-      hometown: 'Edmond, OK'
-    },
-    {
-      name: 'Matt Williams',
-      tribe: 'Hina',
-      occupation: 'Airport Ramp Agent',
-      age: 52,
-      hometown: 'St. George, UT'
-    },
-    {
-      name: 'MC Chukwujekwu',
-      tribe: 'Hina',
-      occupation: 'Fitness Trainer',
-      age: 29,
-      hometown: 'San Diego, CA'
-    },
-    {
-      name: 'Sophie Segreti',
-      tribe: 'Hina',
-      occupation: 'Strategy Associate',
-      age: 31,
-      hometown: 'New York, NY'
-    },
-    {
-      name: 'Steven Ramm',
-      tribe: 'Hina',
-      occupation: 'Rocket Scientist',
-      age: 35,
-      hometown: 'Denver, CO'
+      hometown: 'Miami, FL → Miami, FL'
     },
     // Uli Tribe (Red)
     {
-      name: 'Jawan Pitts',
+      name: 'Jawann Pitts',
       tribe: 'Uli',
-      occupation: 'Video Editor',
+      occupation: 'Video editor',
       age: 28,
-      hometown: 'Los Angeles, CA'
+      hometown: 'Salem, NJ → Los Angeles, CA'
     },
     {
       name: 'Nate Moore',
       tribe: 'Uli',
-      occupation: 'Film Producer',
+      occupation: 'Film producer',
       age: 47,
-      hometown: 'Hermosa Beach, CA'
+      hometown: 'Clovis, CA → Hermosa Beach, CA'
     },
     {
       name: 'Rizo Velovic',
       tribe: 'Uli',
-      occupation: 'Tech Sales',
+      occupation: 'Tech sales',
       age: 25,
-      hometown: 'Yonkers, NY'
+      hometown: 'Yonkers, NY → Yonkers, NY'
     },
     {
       name: 'Sage Ahrens-Nichols',
       tribe: 'Uli',
-      occupation: 'Clinical Social Worker',
+      occupation: 'Clinical social worker',
       age: 30,
-      hometown: 'Olympia, WA'
+      hometown: 'Roxboro, NC → Olympia, WA'
     },
     {
       name: 'Savannah Louie',
       tribe: 'Uli',
-      occupation: 'Former Reporter',
+      occupation: 'Former reporter',
       age: 31,
-      hometown: 'Atlanta, GA'
+      hometown: 'Walnut Creek, CA → Atlanta, GA'
     },
     {
       name: 'Shannon Fairweather',
       tribe: 'Uli',
-      occupation: 'Wellness Specialist',
-      age: 27,
-      hometown: 'Boston, MA'
+      occupation: 'Wellness specialist',
+      age: 28,
+      hometown: 'Wakefield, MA → Boston, MA'
     }
   ];
 
@@ -195,7 +195,7 @@ async function main() {
     update: {},
     create: {
       email: 'admin@rgfl.com',
-      password: '$2a$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJvJtyJHD0lHu8a5n2a', // password: admin123
+      password: '$2a$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJvJtyJHD0lHu8a5n2a', // admin123
       name: 'RGFL Admin',
       isAdmin: true,
       leagueId: league.id
@@ -204,21 +204,37 @@ async function main() {
 
   console.log('✅ Admin user created:', adminUser.email);
 
-  // Create sample regular user
-  const sampleUser = await prisma.user.upsert({
-    where: { email: 'user@rgfl.com' },
-    update: {},
-    create: {
-      email: 'user@rgfl.com',
-      password: '$2a$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJvJtyJHD0lHu8a5n2a', // password: user123
-      name: 'Sample User',
-      isAdmin: false,
-      leagueId: league.id
-    }
-  });
+  const userHash = '$2b$10$pCZvUPdtnyFrrdKGb83s.OboRWSFVpTIH704YG3saNN/7jJ1sBoEu'; // test123
 
-  console.log('✅ Sample user created:', sampleUser.email);
+  const playerNames = [
+    'Arthur',
+    'Brandon',
+    'Blake',
+    'Will',
+    'Meg',
+    'Kody',
+    'Nelson',
+    'Mike',
+    'Kurtis'
+  ];
 
+  console.log('👥 Creating league players...');
+  for (const name of playerNames) {
+    const email = `${name.toLowerCase()}@rgfl.com`;
+    await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email,
+        password: userHash,
+        name,
+        isAdmin: false,
+        leagueId: league.id
+      }
+    });
+  }
+
+  console.log('✅ League players seeded');
   console.log('🎉 Seed completed successfully!');
 }
 

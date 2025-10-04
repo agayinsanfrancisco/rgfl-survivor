@@ -17,10 +17,10 @@ const StatsDashboard = () => {
         });
     }, []);
     if (error) {
-        return _jsx("div", { style: { color: "crimson" }, children: error });
+        return _jsx("div", { className: "rg-page", style: { color: "crimson" }, children: error });
     }
     if (!stats)
-        return _jsx("div", { children: "Loading stats\u2026" });
-    return (_jsxs("div", { children: [_jsx("h2", { children: "System Stats" }), _jsxs("ul", { children: [_jsxs("li", { children: ["Total Users: ", stats.users] }), _jsxs("li", { children: ["Total Picks: ", stats.picks] }), _jsxs("li", { children: ["Total Castaways: ", stats.castaways] }), _jsxs("li", { children: ["Total Weeks: ", stats.weeks] })] })] }));
+        return _jsx("div", { className: "rg-page", children: "Loading stats\u2026" });
+    return (_jsxs("div", { className: "rg-page", children: [_jsxs("section", { className: "rg-hero", children: [_jsx("span", { className: "rg-pill", children: "System Stats" }), _jsx("h1", { children: "League health at a glance." })] }), _jsx("section", { className: "rg-section", style: { marginTop: "3rem" }, children: _jsxs("div", { className: "rg-grid rg-grid--two", children: [_jsxs("article", { className: "rg-stat-card", children: [_jsx("span", { children: "Total users" }), _jsx("strong", { children: stats.users })] }), _jsxs("article", { className: "rg-stat-card", children: [_jsx("span", { children: "Total picks submitted" }), _jsx("strong", { children: stats.picks })] }), _jsxs("article", { className: "rg-stat-card", children: [_jsx("span", { children: "Castaways in system" }), _jsx("strong", { children: stats.castaways })] }), _jsxs("article", { className: "rg-stat-card", children: [_jsx("span", { children: "Weeks configured" }), _jsx("strong", { children: stats.weeks })] })] }) })] }));
 };
 export default StatsDashboard;

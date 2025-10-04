@@ -51,36 +51,44 @@ const PicksManager = () => {
   };
 
   return (
-    <div>
-      <h2>Draft Manager</h2>
-      <p>Draft status: {status}</p>
-      <button onClick={runDraft} disabled={loading || status === "COMPLETED"} style={{ marginBottom: 16 }}>
-        {loading ? "Processing..." : status === "COMPLETED" ? "Draft Completed" : "Run Draft"}
-      </button>
-      <button onClick={loadStatus} disabled={loading} style={{ marginLeft: 8 }}>
-        Refresh
-      </button>
-      {message && <p style={{ marginTop: 12 }}>{message}</p>}
-      <table style={{ width: "100%", marginTop: 16 }}>
-        <thead>
-          <tr>
-            <th>Pick #</th>
-            <th>User</th>
-            <th>Castaway</th>
-            <th>Round</th>
-          </tr>
-        </thead>
-        <tbody>
-          {picks.map((pick) => (
-            <tr key={pick.id}>
-              <td>{pick.pickNumber}</td>
-              <td>{pick.user?.name ?? pick.user?.email}</td>
-              <td>{pick.castaway?.name}</td>
-              <td>{pick.round}</td>
+    <div className="rg-page">
+      <section className="rg-hero">
+        <span className="rg-pill">Draft Manager</span>
+        <h1>Launch the snake draft when rankings lock.</h1>
+        <p>Current status: {status}</p>
+      </section>
+
+      <section className="rg-section" style={{ marginTop: "3rem" }}>
+        <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem" }}>
+          <button onClick={runDraft} disabled={loading || status === "COMPLETED"}>
+            {loading ? "Processing..." : status === "COMPLETED" ? "Draft Completed" : "Run Draft"}
+          </button>
+          <button onClick={loadStatus} disabled={loading} className="rg-nav__auth">
+            Refresh
+          </button>
+        </div>
+        {message && <p style={{ marginBottom: "1rem" }}>{message}</p>}
+        <table>
+          <thead>
+            <tr>
+              <th>Pick #</th>
+              <th>User</th>
+              <th>Castaway</th>
+              <th>Round</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {picks.map((pick) => (
+              <tr key={pick.id}>
+                <td>{pick.pickNumber}</td>
+                <td>{pick.user?.name ?? pick.user?.email}</td>
+                <td>{pick.castaway?.name}</td>
+                <td>{pick.round}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
     </div>
   );
 };
