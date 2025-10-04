@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import Navigation from "@/components/Navigation";
 import Splash from "@/pages/Splash";
 import Login from "@/pages/Login";
@@ -27,10 +28,17 @@ import SeasonManager from "@/pages/admin/SeasonManager";
 import StatsDashboard from "@/pages/admin/StatsDashboard";
 import { routes } from "@/shared/routes";
 
-const App = () => (
-  <Router>
-    <Navigation />
-    <Routes>
+const App = () => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <div className="container">Loading...</div>;
+  }
+
+  return (
+    <Router>
+      <Navigation />
+      <Routes>
         <Route path={routes.root} element={<Splash />} />
         <Route path={routes.login} element={<Login />} />
         <Route path={routes.signup} element={<Signup />} />
@@ -57,6 +65,7 @@ const App = () => (
         <Route path={routes.notFound} element={<NotFound />} />
       </Routes>
     </Router>
-);
+  );
+};
 
 export default App;

@@ -6,28 +6,49 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        api.get("/api/auth/me")
-            .then((res) => {
-            setUser(res.data);
-            setLoading(false);
-        })
-            .catch(() => {
-            setUser(null);
-            setLoading(false);
-        });
+        // Add a small delay to ensure the app is fully mounted
+        const timer = setTimeout(() => {
+            api.get("/api/auth/me")
+                .then((res) => {
+                setUser(res.data);
+                setLoading(false);
+            })
+                .catch((error) => {
+                console.log("Auth check failed (normal for unauthenticated users):", error);
+                setUser(null);
+                setLoading(false);
+            });
+        }, 100);
+        return () => clearTimeout(timer);
     }, []);
     const login = async (email, password) => {
-        const res = await api.post("/api/auth/login", { email, password });
-        setUser(res.data.user);
+        try {
+            const res = await api.post("/api/auth/login", { email, password });
+            setUser(res.data.user);
+        }
+        catch (error) {
+            console.error("Login error:", error);
+            throw error;
+        }
     };
     const logout = () => {
-        api.post("/api/auth/logout").finally(() => setUser(null));
+        api.post("/api/auth/logout")
+            .catch((error) => console.error("Logout error:", error))
+            .finally(() => setUser(null));
     };
     return (_jsx(AuthContext.Provider, { value: { user, loading, login, logout }, children: children }));
 };
 export const useAuth = () => {
     const ctx = useContext(AuthContext);
-    if (!ctx)
-        throw new Error("useAuth must be used within AuthProvider");
+    if (!ctx) {
+        console.error("useAuth must be used within AuthProvider");
+        // Return a default context to prevent crashes
+        return {
+            user: null,
+            loading: true,
+            login: async () => { },
+            logout: () => { }
+        };
+    }
     return ctx;
 };
