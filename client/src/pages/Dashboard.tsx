@@ -8,24 +8,24 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="rg-page">
-      <section className="rg-hero" style={{ alignItems: "center", textAlign: "center" }}>
+      <section className="rg-hero text-center">
         <span className="rg-pill">Welcome back</span>
         <h1>{user?.name ?? "Player"}, let&apos;s set up your next move.</h1>
         <p>
           Choose your weekly active castaway, review your preseason rankings, and scout the leaderboard. Everything you
           need to outscore the tribe is right here.
         </p>
-        <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "1rem" }}>
+        <div className="flex flex-center gap-2 mt-2">
           <Link to={routes.weeklyPicks}>
             <button>Weekly Picks</button>
           </Link>
           <Link to={routes.preseasonRank}>
-            <button style={{ background: "rgba(45, 32, 24, 0.08)", color: "var(--text-dark)" }}>Edit Rankings</button>
+            <button className="button-secondary">Edit Rankings</button>
           </Link>
         </div>
       </section>
 
-      <section className="rg-section" style={{ marginTop: "3rem" }}>
+      <section className="rg-section">
         <h2>Quick Actions</h2>
         <div className="rg-grid rg-grid--two">
           <article className="rg-card">

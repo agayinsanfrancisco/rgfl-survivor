@@ -70,27 +70,11 @@ const Leaderboard: React.FC = () => {
   return (
     <div className="rg-page">
       <section className="rg-hero">
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+        <div className="flex gap-2 mb-2">
           <span className="rg-pill">Leaderboard</span>
           {isLive && (
-            <span style={{
-              padding: "0.25rem 0.75rem",
-              backgroundColor: "#22c55e",
-              color: "white",
-              borderRadius: "4px",
-              fontSize: "0.75rem",
-              fontWeight: "600",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.35rem"
-            }}>
-              <span style={{
-                width: "8px",
-                height: "8px",
-                backgroundColor: "white",
-                borderRadius: "50%",
-                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
-              }}></span>
+            <span className="badge-live">
+              <span className="pulse"></span>
               LIVE
             </span>
           )}
@@ -102,7 +86,7 @@ const Leaderboard: React.FC = () => {
         </p>
       </section>
 
-      <section className="rg-section" style={{ marginTop: "3rem" }}>
+      <section className="rg-section">
         {error && <p className="error">{error}</p>}
         <div className="rg-tabs">
           <button
@@ -154,12 +138,12 @@ const Leaderboard: React.FC = () => {
         )}
 
         {tab === "weekly" && (
-          <div className="rg-grid" style={{ gap: "1.25rem" }}>
+          <div className="rg-grid">
             {entries.map((entry) => (
               <article key={entry.id} className="rg-card">
                 <h3>{entry.name}</h3>
-                <p style={{ color: "var(--text-muted)" }}>{entry.email}</p>
-                <p style={{ marginTop: "1rem", fontWeight: 600 }}>Weekly Picks (latest first)</p>
+                <p className="text-muted">{entry.email}</p>
+                <p className="mt-2" style={{ fontWeight: 600 }}>Weekly Picks (latest first)</p>
                 <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
                   {(entry.draftPicks ?? []).map((pick) => (
                     <li key={pick.id}>{pick.castaway.name}</li>
@@ -176,7 +160,7 @@ const Leaderboard: React.FC = () => {
             {entries.map((entry, index) => (
               <article key={entry.id} className="rg-card">
                 <h3>{entry.name}</h3>
-                <p style={{ color: "var(--text-muted)", marginBottom: "0.75rem" }}>{entry.email}</p>
+                <p className="text-muted mb-2">{entry.email}</p>
                 <p>Joined: 2025</p>
                 <p>Rank: {index + 1}</p>
               </article>
