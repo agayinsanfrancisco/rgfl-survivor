@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import prisma from "./prisma.js";
 import { requireAdmin } from "./middleware.js";
+import { io } from "./index.js";
 
 const router = Router();
 
@@ -81,6 +82,27 @@ router.post("/week/:weekNumber", async (req, res) => {
     by: ["userId"],
     _sum: { points: true }
   });
+
+  // Build and emit real-time leaderboard update
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      scores: { select: { points: true } }
+    }
+  });
+
+  const standings = users
+    .map(user => ({
+      id: user.id,
+      name: user.name,
+      totalPoints: user.scores.reduce((sum, s) => sum + s.points, 0)
+    }))
+    .sort((a, b) => b.totalPoints - a.totalPoints)
+    .map((user, index) => ({ ...user, rank: index + 1 }));
+
+  // Emit socket event for real-time updates
+  io.emit("leaderboard:updated", standings);
 
   res.json({ success: true, leaderboard });
 });

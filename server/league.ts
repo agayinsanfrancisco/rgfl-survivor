@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { z } from "zod";
 import prisma from "./prisma.js";
 import { authenticate, requireAdmin } from "./middleware.js";
 
@@ -13,6 +14,36 @@ router.get("/", requireAdmin, async (_req, res) => {
     }
   });
   res.json(league);
+});
+
+const leagueUpdateSchema = z.object({
+  picksPerUser: z.number().int().min(1).max(10).optional(),
+  name: z.string().min(1).optional(),
+  code: z.string().min(1).optional()
+});
+
+router.put("/", requireAdmin, async (req, res) => {
+  const payload = leagueUpdateSchema.safeParse(req.body);
+  if (!payload.success) {
+    return res.status(400).json({ error: payload.error.flatten() });
+  }
+
+  const league = await prisma.league.findFirst();
+  if (!league) {
+    return res.status(404).json({ error: "League not found" });
+  }
+
+  const updated = await prisma.league.update({
+    where: { id: league.id },
+    data: payload.data,
+    include: {
+      users: {
+        select: { id: true, name: true, email: true, isAdmin: true }
+      }
+    }
+  });
+
+  res.json(updated);
 });
 
 async function buildStandings() {

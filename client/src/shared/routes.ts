@@ -31,6 +31,8 @@ export const routes = {
     scoring: "/admin/scoring",
     season: "/admin/season",
     stats: "/admin/stats",
+    analytics: "/admin/analytics",
+    headToHead: "/admin/head-to-head",
     announcements: "/admin/announcements"
   }
 } as const;

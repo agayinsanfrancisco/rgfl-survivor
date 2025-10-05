@@ -1,5 +1,7 @@
 // server/index.ts
 import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import dotenv from "dotenv";
 import cors from "cors";
 import type { CorsOptions } from "cors";
@@ -22,6 +24,7 @@ import prisma from "./prisma.js";
 dotenv.config();
 
 const app = express();
+const httpServer = createServer(app);
 const PORT = Number(process.env.PORT) || 5050;
 
 async function ensureDatabaseConnection() {
@@ -57,6 +60,23 @@ const corsOptions: CorsOptions = {
 if (process.env.NODE_ENV === "production" && allowedOrigins.length === 0) {
   console.warn("No CLIENT_ORIGIN configured. Defaulting to allow all origins.");
 }
+
+// Initialize Socket.io
+const io = new Server(httpServer, {
+  cors: corsOptions
+});
+
+// Socket.io connection handler
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+// Export io instance for use in other files
+export { io };
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
@@ -116,6 +136,7 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Socket.io is ready for connections`);
 });

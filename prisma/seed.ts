@@ -152,11 +152,15 @@ async function main() {
 
   console.log('🏝️ Creating castaways...');
   for (const castaway of castaways) {
-    await prisma.castaway.upsert({
-      where: { name: castaway.name },
-      update: {},
-      create: castaway
-    });
+    const existing = await prisma.castaway.findFirst({ where: { name: castaway.name } });
+    if (existing) {
+      await prisma.castaway.update({
+        where: { id: existing.id },
+        data: castaway
+      });
+    } else {
+      await prisma.castaway.create({ data: castaway });
+    }
   }
 
   console.log(`✅ Created ${castaways.length} castaways`);
@@ -180,11 +184,15 @@ async function main() {
 
   console.log('📅 Creating weeks...');
   for (const week of weeks) {
-    await prisma.week.upsert({
-      where: { weekNumber: week.weekNumber },
-      update: {},
-      create: week
-    });
+    const existing = await prisma.week.findFirst({ where: { weekNumber: week.weekNumber } });
+    if (existing) {
+      await prisma.week.update({
+        where: { id: existing.id },
+        data: week
+      });
+    } else {
+      await prisma.week.create({ data: week });
+    }
   }
 
   console.log(`✅ Created ${weeks.length} weeks`);

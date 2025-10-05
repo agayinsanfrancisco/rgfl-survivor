@@ -139,4 +139,89 @@ router.post("/run", requireAdmin, async (_req, res) => {
   res.json({ success: true, picks });
 });
 
+router.post("/reset", requireAdmin, async (_req, res) => {
+  const league = await prisma.league.findFirst();
+  if (!league) {
+    return res.status(400).json({ error: "League not configured" });
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.draftPick.deleteMany({ where: { leagueId: league.id } });
+    await tx.league.update({
+      where: { id: league.id },
+      data: {
+        draftStatus: "PENDING",
+        draftRunAt: null
+      }
+    });
+  });
+
+  res.json({ success: true, message: "Draft reset successfully" });
+});
+
+router.post("/manual", requireAdmin, async (req, res) => {
+  const { userId, castawayId, round } = req.body as {
+    userId?: string;
+    castawayId?: string;
+    round?: number;
+  };
+
+  if (!userId || !castawayId || !round) {
+    return res.status(400).json({ error: "userId, castawayId, and round are required" });
+  }
+
+  const league = await prisma.league.findFirst();
+  if (!league) {
+    return res.status(400).json({ error: "League not configured" });
+  }
+
+  const existingPick = await prisma.draftPick.findUnique({
+    where: { leagueId_userId_round: { leagueId: league.id, userId, round } }
+  });
+
+  if (existingPick) {
+    await prisma.draftPick.update({
+      where: { id: existingPick.id },
+      data: { castawayId }
+    });
+  } else {
+    const maxPickNumber = await prisma.draftPick.findFirst({
+      where: { leagueId: league.id },
+      orderBy: { pickNumber: "desc" },
+      select: { pickNumber: true }
+    });
+
+    await prisma.draftPick.create({
+      data: {
+        userId,
+        castawayId,
+        leagueId: league.id,
+        round,
+        pickNumber: (maxPickNumber?.pickNumber ?? 0) + 1
+      }
+    });
+  }
+
+  const picks = await prisma.draftPick.findMany({
+    where: { leagueId: league.id },
+    include: {
+      user: { select: { id: true, name: true, email: true } },
+      castaway: true
+    },
+    orderBy: { pickNumber: "asc" }
+  });
+
+  res.json({ success: true, picks });
+});
+
+router.delete("/manual/:pickId", requireAdmin, async (req, res) => {
+  const { pickId } = req.params;
+
+  await prisma.draftPick.delete({
+    where: { id: pickId }
+  });
+
+  res.json({ success: true, message: "Pick deleted" });
+});
+
 export default router;

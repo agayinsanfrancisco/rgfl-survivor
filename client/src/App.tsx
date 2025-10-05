@@ -26,6 +26,8 @@ import PicksManager from "@/pages/admin/PicksManager";
 import PointsManager from "@/pages/admin/PointsManager";
 import SeasonManager from "@/pages/admin/SeasonManager";
 import StatsDashboard from "@/pages/admin/StatsDashboard";
+import AnalyticsDashboard from "@/pages/admin/AnalyticsDashboard";
+import HeadToHeadComparison from "@/pages/admin/HeadToHeadComparison";
 import { routes } from "@/shared/routes";
 import About from "@/pages/About";
 import HowToPlay from "@/pages/HowToPlay";
@@ -82,6 +84,8 @@ const App = () => {
         <Route path={routes.admin.scoring} element={<AdminRoute><PointsManager /></AdminRoute>} />
         <Route path={routes.admin.season} element={<AdminRoute><SeasonManager /></AdminRoute>} />
         <Route path={routes.admin.stats} element={<AdminRoute><StatsDashboard /></AdminRoute>} />
+        <Route path={routes.admin.analytics} element={<AdminRoute><AnalyticsDashboard /></AdminRoute>} />
+        <Route path={routes.admin.headToHead} element={<AdminRoute><HeadToHeadComparison /></AdminRoute>} />
 
         <Route path={routes.notFound} element={<NotFound />} />
       </Routes>

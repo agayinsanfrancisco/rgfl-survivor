@@ -6,7 +6,7 @@ export function getSocket(): Socket {
   if (!socket) {
     socket = io("/", {
       path: "/socket.io",
-      transports: ["websocket"],
+      transports: ["websocket", "polling"],
       withCredentials: true,
       autoConnect: true,
     });
@@ -15,3 +15,6 @@ export function getSocket(): Socket {
   }
   return socket;
 }
+
+// Export default socket instance
+export const socket = getSocket();

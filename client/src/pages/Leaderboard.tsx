@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { DraftPick } from "@/shared/types";
+import { socket } from "@/lib/socket";
 
 interface LeaderboardEntry {
   id: string;
@@ -9,6 +10,7 @@ interface LeaderboardEntry {
   totalPoints: number;
   rawPoints: number;
   draftPicks?: DraftPick[];
+  rank?: number;
 }
 
 type LeaderboardTab = "live" | "weekly" | "members";
@@ -17,8 +19,10 @@ const Leaderboard: React.FC = () => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<LeaderboardTab>("live");
+  const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
+    // Initial data fetch
     api
       .get("/api/league/standings")
       .then((res) => {
@@ -29,12 +33,68 @@ const Leaderboard: React.FC = () => {
         setEntries([]);
         setError("Unable to load leaderboard right now.");
       });
+
+    // Socket.io listeners for real-time updates
+    const handleConnect = () => {
+      setIsLive(true);
+      console.log("Leaderboard connected to real-time updates");
+    };
+
+    const handleDisconnect = () => {
+      setIsLive(false);
+      console.log("Leaderboard disconnected from real-time updates");
+    };
+
+    const handleLeaderboardUpdate = (newStandings: LeaderboardEntry[]) => {
+      console.log("Received real-time leaderboard update:", newStandings);
+      setEntries(newStandings);
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("leaderboard:updated", handleLeaderboardUpdate);
+
+    // Set initial connection state
+    if (socket.connected) {
+      setIsLive(true);
+    }
+
+    // Cleanup listeners on unmount
+    return () => {
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("leaderboard:updated", handleLeaderboardUpdate);
+    };
   }, []);
 
   return (
     <div className="rg-page">
       <section className="rg-hero">
-        <span className="rg-pill">Leaderboard</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+          <span className="rg-pill">Leaderboard</span>
+          {isLive && (
+            <span style={{
+              padding: "0.25rem 0.75rem",
+              backgroundColor: "#22c55e",
+              color: "white",
+              borderRadius: "4px",
+              fontSize: "0.75rem",
+              fontWeight: "600",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.35rem"
+            }}>
+              <span style={{
+                width: "8px",
+                height: "8px",
+                backgroundColor: "white",
+                borderRadius: "50%",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+              }}></span>
+              LIVE
+            </span>
+          )}
+        </div>
         <h1>Live rankings updated after every Tribal Council.</h1>
         <p>
           Track momentum week by week. Dive into active picks, rival totals, and trends for the entire league in one
